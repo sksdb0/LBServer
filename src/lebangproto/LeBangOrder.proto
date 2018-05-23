@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "LeBangProto.proto";
+package lebangproto;
+
+message Order{
+  string phone = 1;
+  UserAddress src = 2;
+  UserAddress dst = 3;
+  // 帮我买内容
+  string content = 4;
+  // 商品类型
+  string goodstype = 5;
+  // 订单类型
+  string distributiontype = 6;
+  // 下单时间
+  int64 ordertime = 7;
+  // 配送时间
+  int64 deliverytime = 8;
+  // 订单状态
+  int32 ordestatus = 9;
+}
+
+message GetOrderRes{
+	repeated Order order = 1;
+	string errorcode = 2;
+}

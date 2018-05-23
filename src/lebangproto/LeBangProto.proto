@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message Response{
+	string errorcode = 1;
+}
+
+message SignIn{
+	string phone = 1;
+	string code = 2;
+	string password = 3;
+}
+
+message SignInRes{
+	string phone = 1;
+	string errorcode = 2;
+}
+
+message SignUp{
+	string phone = 1;
+	string code = 2;
+}
+
+message SignUpRes{
+	string phone = 1;
+	string errorcode = 2;
+}
+
+message SignUpBak{
+	int32 userid = 1;
+}
+
+message UserAddress{
+	string name = 1;
+	string phone = 2;
+	string addressname = 3;
+	string address = 4;
+	string housenumber = 5;
+	string subaddress = 6;
+	bool isdefault = 7;
+}
+
+message UserInfo{
+	string phone = 1;
+	string username = 2;
+	string password = 3;
+	int32 sex = 4;
+	repeated UserAddress address = 5;
+	int32 ordertimes = 6;
+}
+
+message GetAddressRes{
+	repeated UserAddress address = 1;
+	string errorcode = 2;
+}
+
+message ModifyAddress{
+	string phone = 1;
+	int32 addressnumber = 2;
+	UserAddress address = 3;
+}
+
+message DeleteAddress{
+	string phone = 1;
+	int32 addressnumber = 2;
+}
+
+message DefaultAddressRes{
+	UserAddress address = 1;
+	string errorcode = 2;
+}
