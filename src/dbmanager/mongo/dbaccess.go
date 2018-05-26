@@ -36,9 +36,6 @@ func (this *MongoManager) Init(addrs string, port string) error {
 
 	if !this.IsCollExist(config.DB().DBName, config.DB().CollMap["classification"]) {
 		for classificationName, index := range config.DB().Classification {
-
-			logger.PRINTLINE(classificationName, index)
-
 			this.Insert(config.DB().DBName, config.DB().CollMap["classification"],
 				&model.Classification{Name: classificationName})
 

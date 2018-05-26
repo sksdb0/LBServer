@@ -30,14 +30,10 @@ func GetSubClassification(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	logger.PRINTLINE(classitype)
 	var response lebangproto.GetClassificationRes
 
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["subclassification"],
 		bson.M{"classification": classitype.GetTypename()}, nil, &response.Classification) {
-		logger.PRINTLINE(response.Classification.GetClassification())
-		logger.PRINTLINE(response.Classification.GetHint())
-		logger.PRINTLINE(response.Classification.GetLabels())
 	} else {
 		response.Errorcode = "no classification"
 		logger.PRINTLINE("no classification: ", classitype.GetTypename())
