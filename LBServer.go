@@ -5,6 +5,7 @@ import (
 	"dbmanager"
 	"lebangnet"
 	"logger"
+	"processor/classificationmanager"
 	"processor/ordermanager"
 	"processor/usermanager"
 )
@@ -28,9 +29,9 @@ func main() {
 	defer dbmanager.Close()
 
 	lebangnet.Init()
-
 	usermanager.Init()
 	ordermanager.Init()
+	classificationmanager.Init()
 
 	lebangnet.Run()
 }

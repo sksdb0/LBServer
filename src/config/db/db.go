@@ -12,7 +12,10 @@ type DB struct {
 	MongoDBLocalPort    string
 	MongoDBLocalAddress string
 
-	CollMap map[string]string
+	CollMap        map[string]string
+	Classification map[string]string
+
+	SubClassification map[string]map[string]string
 }
 
 func (this *DB) Load() bool {
@@ -29,11 +32,19 @@ func (this *DB) Load() bool {
 	this.MongoDBLocalAddress, _ = dbcfg.GetValue("mongodb", "MongoDBLocalAddress")
 
 	this.CollMap, _ = dbcfg.GetSection("CollMap")
+
+	this.Classification, _ = dbcfg.GetSection("Classification")
+	for value, _ := range this.Classification {
+		this.SubClassification[value], _ = dbcfg.GetSection(value)
+	}
+
 	return true
 }
 
 func NewDB() *DB {
 	return &DB{
-		CollMap: make(map[string]string),
+		CollMap:           make(map[string]string),
+		Classification:    make(map[string]string),
+		SubClassification: make(map[string]map[string]string),
 	}
 }

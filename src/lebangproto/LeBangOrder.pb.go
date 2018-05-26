@@ -2,29 +2,6 @@
 // source: LeBangOrder.proto
 // DO NOT EDIT!
 
-/*
-Package lebangproto is a generated protocol buffer package.
-
-It is generated from these files:
-	LeBangOrder.proto
-	LeBangProto.proto
-
-It has these top-level messages:
-	Order
-	GetOrderRes
-	Response
-	SignIn
-	SignInRes
-	SignUp
-	SignUpRes
-	SignUpBak
-	UserAddress
-	UserInfo
-	GetAddressRes
-	ModifyAddress
-	DeleteAddress
-	DefaultAddressRes
-*/
 package lebangproto
 
 import proto "github.com/golang/protobuf/proto"
@@ -35,12 +12,6 @@ import math "math"
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the proto package it is being compiled against.
-// A compilation error at this line likely means your copy of the
-// proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Order struct {
 	Phone string       `protobuf:"bytes,1,opt,name=phone" json:"phone,omitempty"`
@@ -63,7 +34,7 @@ type Order struct {
 func (m *Order) Reset()                    { *m = Order{} }
 func (m *Order) String() string            { return proto.CompactTextString(m) }
 func (*Order) ProtoMessage()               {}
-func (*Order) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*Order) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
 func (m *Order) GetPhone() string {
 	if m != nil {
@@ -136,7 +107,7 @@ type GetOrderRes struct {
 func (m *GetOrderRes) Reset()                    { *m = GetOrderRes{} }
 func (m *GetOrderRes) String() string            { return proto.CompactTextString(m) }
 func (*GetOrderRes) ProtoMessage()               {}
-func (*GetOrderRes) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*GetOrderRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
 
 func (m *GetOrderRes) GetOrder() []*Order {
 	if m != nil {
@@ -157,9 +128,9 @@ func init() {
 	proto.RegisterType((*GetOrderRes)(nil), "lebangproto.GetOrderRes")
 }
 
-func init() { proto.RegisterFile("LeBangOrder.proto", fileDescriptor0) }
+func init() { proto.RegisterFile("LeBangOrder.proto", fileDescriptor1) }
 
-var fileDescriptor0 = []byte{
+var fileDescriptor1 = []byte{
 	// 281 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x84, 0x90, 0xc1, 0x4a, 0xf3, 0x40,
 	0x10, 0xc7, 0xd9, 0xe6, 0x4b, 0xfb, 0x65, 0xe2, 0x41, 0x17, 0x0f, 0x8b, 0x88, 0x84, 0x9e, 0x96,

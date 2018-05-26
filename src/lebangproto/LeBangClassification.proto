@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message Classification{
+	string classification = 1;
+	string labels = 2;
+	string hint = 3;
+}
+
+message ClassificationType{
+	string typename = 1;
+}
+
+message GetClassificationRes{
+	Classification classification = 1;
+	string errorcode = 2;
+}

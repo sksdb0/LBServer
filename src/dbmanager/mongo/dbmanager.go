@@ -37,6 +37,17 @@ func (this *MongoManager) DistinctCount(db string, coll string, query bson.M, di
 	return len(tmp), nil
 }
 
+func (this *MongoManager) IsCollExist(db string, coll string) bool {
+	c := this.GetDB(db).C(coll)
+	n, _ := c.Count()
+
+	if n > 0 {
+		return true
+	}
+
+	return false
+}
+
 func (this *MongoManager) Max(db string, coll string, query bson.M, sort string, i interface{}) bool {
 	c := this.GetDB(db).C(coll)
 	count, err := c.Find(query).Count()

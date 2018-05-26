@@ -20,7 +20,7 @@ type Response struct {
 func (m *Response) Reset()                    { *m = Response{} }
 func (m *Response) String() string            { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()               {}
-func (*Response) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*Response) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *Response) GetErrorcode() string {
 	if m != nil {
@@ -38,7 +38,7 @@ type SignIn struct {
 func (m *SignIn) Reset()                    { *m = SignIn{} }
 func (m *SignIn) String() string            { return proto.CompactTextString(m) }
 func (*SignIn) ProtoMessage()               {}
-func (*SignIn) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (*SignIn) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 func (m *SignIn) GetPhone() string {
 	if m != nil {
@@ -69,7 +69,7 @@ type SignInRes struct {
 func (m *SignInRes) Reset()                    { *m = SignInRes{} }
 func (m *SignInRes) String() string            { return proto.CompactTextString(m) }
 func (*SignInRes) ProtoMessage()               {}
-func (*SignInRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (*SignInRes) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
 func (m *SignInRes) GetPhone() string {
 	if m != nil {
@@ -93,7 +93,7 @@ type SignUp struct {
 func (m *SignUp) Reset()                    { *m = SignUp{} }
 func (m *SignUp) String() string            { return proto.CompactTextString(m) }
 func (*SignUp) ProtoMessage()               {}
-func (*SignUp) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (*SignUp) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
 
 func (m *SignUp) GetPhone() string {
 	if m != nil {
@@ -117,7 +117,7 @@ type SignUpRes struct {
 func (m *SignUpRes) Reset()                    { *m = SignUpRes{} }
 func (m *SignUpRes) String() string            { return proto.CompactTextString(m) }
 func (*SignUpRes) ProtoMessage()               {}
-func (*SignUpRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (*SignUpRes) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
 
 func (m *SignUpRes) GetPhone() string {
 	if m != nil {
@@ -140,7 +140,7 @@ type SignUpBak struct {
 func (m *SignUpBak) Reset()                    { *m = SignUpBak{} }
 func (m *SignUpBak) String() string            { return proto.CompactTextString(m) }
 func (*SignUpBak) ProtoMessage()               {}
-func (*SignUpBak) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (*SignUpBak) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
 
 func (m *SignUpBak) GetUserid() int32 {
 	if m != nil {
@@ -162,7 +162,7 @@ type UserAddress struct {
 func (m *UserAddress) Reset()                    { *m = UserAddress{} }
 func (m *UserAddress) String() string            { return proto.CompactTextString(m) }
 func (*UserAddress) ProtoMessage()               {}
-func (*UserAddress) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (*UserAddress) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{6} }
 
 func (m *UserAddress) GetName() string {
 	if m != nil {
@@ -225,7 +225,7 @@ type UserInfo struct {
 func (m *UserInfo) Reset()                    { *m = UserInfo{} }
 func (m *UserInfo) String() string            { return proto.CompactTextString(m) }
 func (*UserInfo) ProtoMessage()               {}
-func (*UserInfo) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (*UserInfo) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{7} }
 
 func (m *UserInfo) GetPhone() string {
 	if m != nil {
@@ -277,7 +277,7 @@ type GetAddressRes struct {
 func (m *GetAddressRes) Reset()                    { *m = GetAddressRes{} }
 func (m *GetAddressRes) String() string            { return proto.CompactTextString(m) }
 func (*GetAddressRes) ProtoMessage()               {}
-func (*GetAddressRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (*GetAddressRes) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
 
 func (m *GetAddressRes) GetAddress() []*UserAddress {
 	if m != nil {
@@ -302,7 +302,7 @@ type ModifyAddress struct {
 func (m *ModifyAddress) Reset()                    { *m = ModifyAddress{} }
 func (m *ModifyAddress) String() string            { return proto.CompactTextString(m) }
 func (*ModifyAddress) ProtoMessage()               {}
-func (*ModifyAddress) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+func (*ModifyAddress) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{9} }
 
 func (m *ModifyAddress) GetPhone() string {
 	if m != nil {
@@ -333,7 +333,7 @@ type DeleteAddress struct {
 func (m *DeleteAddress) Reset()                    { *m = DeleteAddress{} }
 func (m *DeleteAddress) String() string            { return proto.CompactTextString(m) }
 func (*DeleteAddress) ProtoMessage()               {}
-func (*DeleteAddress) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+func (*DeleteAddress) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{10} }
 
 func (m *DeleteAddress) GetPhone() string {
 	if m != nil {
@@ -357,7 +357,7 @@ type DefaultAddressRes struct {
 func (m *DefaultAddressRes) Reset()                    { *m = DefaultAddressRes{} }
 func (m *DefaultAddressRes) String() string            { return proto.CompactTextString(m) }
 func (*DefaultAddressRes) ProtoMessage()               {}
-func (*DefaultAddressRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+func (*DefaultAddressRes) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{11} }
 
 func (m *DefaultAddressRes) GetAddress() *UserAddress {
 	if m != nil {
@@ -388,9 +388,9 @@ func init() {
 	proto.RegisterType((*DefaultAddressRes)(nil), "lebangproto.DefaultAddressRes")
 }
 
-func init() { proto.RegisterFile("LeBangProto.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("LeBangProto.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 430 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x52, 0xdd, 0x8a, 0xd4, 0x30,
 	0x14, 0xa6, 0x9d, 0x6d, 0xb7, 0x73, 0x4a, 0xc1, 0x0d, 0x22, 0x65, 0x91, 0xa5, 0x44, 0x2f, 0x7a,

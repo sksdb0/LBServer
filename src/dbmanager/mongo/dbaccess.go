@@ -1,9 +1,12 @@
 package mongo
 
 import (
+	"config"
 	"errors"
 	"fmt"
+	"lebangproto"
 	"logger"
+	"model"
 	"sync"
 	"time"
 
@@ -29,6 +32,22 @@ func (this *MongoManager) Init(addrs string, port string) error {
 		this.session = append(this.session, session)
 
 		logger.LOGLINE("mongodb connect ", addrs, " success!")
+	}
+
+	if !this.IsCollExist(config.DB().DBName, config.DB().CollMap["classification"]) {
+		for classificationName, index := range config.DB().Classification {
+
+			logger.PRINTLINE(classificationName, index)
+
+			this.Insert(config.DB().DBName, config.DB().CollMap["classification"],
+				&model.Classification{Name: classificationName})
+
+			this.Insert(config.DB().DBName, config.DB().CollMap["subclassification"],
+				&lebangproto.Classification{Classification: classificationName,
+					Labels: config.DB().SubClassification[classificationName]["labels"],
+					Hint:   config.DB().SubClassification[classificationName]["hint"]})
+		}
+
 	}
 
 	if len(this.session) > 0 {
