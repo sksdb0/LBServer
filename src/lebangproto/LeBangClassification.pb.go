@@ -16,6 +16,7 @@ It has these top-level messages:
 	GetClassificationRes
 	Order
 	GetOrderRes
+	CancelOrder
 	Response
 	SignIn
 	SignInRes
@@ -23,7 +24,12 @@ It has these top-level messages:
 	SignUpRes
 	SignUpBak
 	UserAddress
+	IDCode
+	GetIDCode
 	UserInfo
+	GetErrandCommonMerchant
+	ErrandCommonMerchant
+	ResErrandCommonMerchant
 	GetAddressRes
 	ModifyAddress
 	DeleteAddress

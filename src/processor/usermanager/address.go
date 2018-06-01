@@ -25,10 +25,8 @@ func AddAddress(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	logger.PRINTLINE(newinfo)
 	var userinfo lebangproto.UserInfo
 	var response lebangproto.Response
-
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": newinfo.GetPhone()}, nil, &userinfo) {
 		// 第一个为默认地址
 		if len(userinfo.GetAddress()) == 0 {
@@ -136,6 +134,7 @@ func DefaultAddress(w http.ResponseWriter, req *http.Request) {
 		}
 		if response.Address == nil {
 			response.Errorcode = "no default address"
+			logger.PRINTLINE("no default address: ", userinfo.GetPhone())
 		}
 	} else {
 		response.Errorcode = "user not exist"

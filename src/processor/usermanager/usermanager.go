@@ -1,22 +1,31 @@
 package usermanager
 
 import (
+	//	"alisms"
 	"config"
 	"dbmanager"
 	"encoding/json"
+	"fmt"
 	"io"
 	"lebangnet"
 	"lebangproto"
 	"logger"
+	"math/rand"
 	"net/http"
 	"processor/common"
+	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
 
 func Init() {
-	lebangnet.RouteRegister("/signin", SignIn)
-	lebangnet.RouteRegister("/signup", SignUp)
+	// idcode and authentication
+	lebangnet.RouteRegister("/getidcode", GetIDCode)
+	lebangnet.RouteRegister("/authentication", Authentication)
+
+	// merchant
+	lebangnet.RouteRegister("/geterrandscommonmerchant", GetErrandsCommonMerchant)
+
 	lebangnet.RouteRegister("/getaddress", GetAddress)
 	lebangnet.RouteRegister("/addaddress", AddAddress)
 	lebangnet.RouteRegister("/modifyaddress", ModifyAddress)
@@ -25,33 +34,49 @@ func Init() {
 	lebangnet.RouteRegister("/defaultaddress", DefaultAddress)
 }
 
-func SignIn(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("SignIn")
-
+func Authentication(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var signin lebangproto.SignIn
-	if !common.Unmarshal(buf, &signin) {
+	var reqdata lebangproto.IDCode
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
 
-	var userinfo lebangproto.UserInfo
-	var response lebangproto.SignInRes
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": signin.GetPhone()}, nil, &userinfo) {
-		if userinfo.GetPassword() == signin.GetPassword() {
-			response.Phone = userinfo.GetPhone()
-			logger.PRINTLINE("user signin: ", signin.GetPhone())
+	var idcode lebangproto.IDCode
+	var response lebangproto.Response
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["idcode"],
+		bson.M{"phone": reqdata.GetPhone()}, nil, &idcode) {
+		logger.PRINTLINE(idcode.GetCode(), reqdata.GetCode())
+		if idcode.GetCode() != reqdata.GetCode() {
+			response.Errorcode = "验证码错误"
+			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
+		} else if time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds() > 90 {
+			durationsecond := time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds()
+			logger.PRINTLINE(durationsecond)
+			response.Errorcode = "验证码超时"
+			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
 		} else {
-			response.Errorcode = "password or username error"
-			logger.PRINTLINE("password or username error: ", signin.GetPhone())
+			var userdata lebangproto.UserInfo
+			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
+				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
+				logger.PRINTLINE("update")
+				userdata.Lastsignintime = reqdata.GetTime()
+				dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, userdata)
+			} else {
+				logger.PRINTLINE("insert")
+				userdata := lebangproto.UserInfo{
+					Phone:          reqdata.GetPhone(),
+					Registertime:   reqdata.GetTime(),
+					Lastsignintime: reqdata.GetTime(),
+				}
+				dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userdata)
+			}
 		}
-
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", signin.GetPhone())
+		response.Errorcode = "用户不存在"
+		logger.PRINTLINE("user not exist: ", idcode.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -62,36 +87,47 @@ func SignIn(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func SignUp(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("SignUp")
-
+func GetIDCode(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var signup lebangproto.SignUp
-	if !common.Unmarshal(buf, &signup) {
+	var reqdata lebangproto.GetIDCode
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
 
-	var response lebangproto.SignInRes
-	if !dbmanager.GetMongo().IsExist(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": signup.GetPhone()}) {
-		userinfo := lebangproto.UserInfo{
-			Phone:    signup.GetPhone(),
-			Password: "",
+	var idcodeinfo lebangproto.IDCode
+	var response lebangproto.Response
+	if dbmanager.GetMongo().IsExist(config.DB().DBName, config.DB().CollMap["idcode"], bson.M{"phone": reqdata.GetPhone()}) {
+		idcodeinfo = lebangproto.IDCode{
+			Phone: reqdata.GetPhone(),
+			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(999999)),
+			Time:  time.Now().Unix() * 1000,
 		}
-		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userinfo)
-		response.Phone = signup.GetPhone()
-		logger.PRINTLINE("user signup: ", signup.GetPhone())
+		logger.PRINTLINE("exist", idcodeinfo.GetCode())
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["idcode"], bson.M{"phone": reqdata.GetPhone()}, &idcodeinfo)
 	} else {
-		response.Errorcode = "user exist"
-		logger.PRINTLINE("user exist: ", signup.GetPhone())
+		idcodeinfo = lebangproto.IDCode{
+			Phone: reqdata.GetPhone(),
+			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(999999)),
+			Time:  time.Now().Unix() * 1000,
+		}
+		logger.PRINTLINE("not exist", idcodeinfo.GetCode())
+		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["idcode"], &idcodeinfo)
 	}
+
+	//	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
+	//		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	//	if err != nil {
+	//		logger.PRINTLINE("dysms.SendSms", err)
+	//	}
 
 	sendbuf, err := json.Marshal(response)
 	if err != nil {
 		logger.PRINTLINE("Marshal response error: ", err)
 		return
 	}
+
 	io.WriteString(w, string(sendbuf))
 }

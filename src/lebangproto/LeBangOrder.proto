@@ -4,24 +4,34 @@ import "LeBangProto.proto";
 package lebangproto;
 
 message Order{
-  string phone = 1;
-  UserAddress src = 2;
-  UserAddress dst = 3;
-  // 帮我买内容
-  string content = 4;
-  // 商品类型
-  string goodstype = 5;
-  // 订单类型
-  string distributiontype = 6;
-  // 下单时间
-  int64 ordertime = 7;
-  // 配送时间
-  int64 deliverytime = 8;
-  // 订单状态
-  int32 ordestatus = 9;
+	// 用户ID
+	string phone = 1;
+	// 取货地址
+	UserAddress src = 2;
+	// 收货地址
+	UserAddress dst = 3;
+	// 帮我买内容
+	string content = 4;
+	// 商品类型
+	string classification = 5;
+	// 指定商家
+	string merchant = 6;
+	// 订单类型 普通 加急
+	string deliverytype = 7;
+	// 下单时间
+	int64 ordertime = 8;
+	// 配送时间
+	int64 deliverytime = 9;
+	// 订单状态
+	int32 ordestatus = 10;
 }
 
 message GetOrderRes{
 	repeated Order order = 1;
 	string errorcode = 2;
+}
+
+message CancelOrder{
+	string phone = 1;
+	int64 ordertime = 2;
 }
