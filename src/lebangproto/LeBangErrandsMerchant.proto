@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message GetErrandCommonMerchantReq{
+	string phone = 1;
+}
+
+message ErrandCommonMerchant{
+	string phone = 1;
+	repeated string merchant = 2;
+}
+
+message GetErrandCommonMerchantRes{
+	repeated string merchant = 1;
+	string errorcode = 2;
+}

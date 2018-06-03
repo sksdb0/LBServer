@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message Response{
+	string errorcode = 1;
+}
+
+// request
+message GetIDCodeReq{
+	string phone = 1;
+}
+
+// model
+message IDCode{
+	string phone = 1;
+	string code = 2;
+	int64 time = 3;
+}
+
+// model 
+message User{
+	// 手机
+	string phone = 1;
+	// 姓名
+	string name = 2;
+	// 密码
+	string password = 3;
+	// 性别
+	int32 sex = 4;
+	// 下单次数
+	int32 ordertimes = 5;
+	// 注册时间
+	int64 registertime = 6;
+	// 最后登录时间
+	int64 lastsignintime = 7;
+}
+
+

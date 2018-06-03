@@ -19,24 +19,22 @@ func Init() {
 }
 
 func GetSubClassification(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("GetSubClassification")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var classitype lebangproto.ClassificationType
-	if !common.Unmarshal(buf, &classitype) {
+	var reqdata lebangproto.GetClassificationReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetTypename())
 
 	var response lebangproto.GetClassificationRes
-
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["subclassification"],
-		bson.M{"classification": classitype.GetTypename()}, nil, &response.Classification) {
+		bson.M{"classification": reqdata.GetTypename()}, nil, &response.Classification) {
 	} else {
-		response.Errorcode = "no classification"
-		logger.PRINTLINE("no classification: ", classitype.GetTypename())
+		response.Errorcode = "no subclassification"
+		logger.PRINTLINE(reqdata.GetTypename(), "no classification: ")
 	}
 
 	sendbuf, err := json.Marshal(response)

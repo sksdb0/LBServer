@@ -1,7 +1,7 @@
 package usermanager
 
 import (
-	//	"alisms"
+	"alisms"
 	"config"
 	"dbmanager"
 	"encoding/json"
@@ -43,6 +43,7 @@ func Authentication(w http.ResponseWriter, req *http.Request) {
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
 	var idcode lebangproto.IDCode
 	var response lebangproto.Response
@@ -58,7 +59,7 @@ func Authentication(w http.ResponseWriter, req *http.Request) {
 			response.Errorcode = "验证码超时"
 			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
 		} else {
-			var userdata lebangproto.UserInfo
+			var userdata lebangproto.User
 			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
 				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
 				logger.PRINTLINE("update")
@@ -66,7 +67,7 @@ func Authentication(w http.ResponseWriter, req *http.Request) {
 				dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, userdata)
 			} else {
 				logger.PRINTLINE("insert")
-				userdata := lebangproto.UserInfo{
+				userdata := lebangproto.User{
 					Phone:          reqdata.GetPhone(),
 					Registertime:   reqdata.GetTime(),
 					Lastsignintime: reqdata.GetTime(),
@@ -92,10 +93,11 @@ func GetIDCode(w http.ResponseWriter, req *http.Request) {
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var reqdata lebangproto.GetIDCode
+	var reqdata lebangproto.GetIDCodeReq
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
 	var idcodeinfo lebangproto.IDCode
 	var response lebangproto.Response
@@ -117,11 +119,11 @@ func GetIDCode(w http.ResponseWriter, req *http.Request) {
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["idcode"], &idcodeinfo)
 	}
 
-	//	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
-	//		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
-	//	if err != nil {
-	//		logger.PRINTLINE("dysms.SendSms", err)
-	//	}
+	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
+		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	if err != nil {
+		logger.PRINTLINE("dysms.SendSms", err)
+	}
 
 	sendbuf, err := json.Marshal(response)
 	if err != nil {

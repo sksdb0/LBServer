@@ -14,29 +14,30 @@ import (
 )
 
 func AddAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("AddAddress")
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var newinfo lebangproto.UserInfo
-	if !common.Unmarshal(buf, &newinfo) {
+	var reqdata lebangproto.AddAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	var userinfo lebangproto.UserInfo
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.Response
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": newinfo.GetPhone()}, nil, &userinfo) {
-		// 第一个为默认地址
-		if len(userinfo.GetAddress()) == 0 {
-			newinfo.Address[0].Isdefault = true
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		if len(useraddress.Address) == 0 {
+			reqdata.Address.Isdefault = true
 		}
-		userinfo.Address = append(userinfo.Address, newinfo.Address[0])
-		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": newinfo.GetPhone()}, userinfo)
+		useraddress.Address = append(useraddress.Address, reqdata.GetAddress())
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, useraddress)
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", newinfo.GetPhone())
+		useraddress := lebangproto.UserAddress{Phone: reqdata.GetPhone()}
+		reqdata.Address.Isdefault = true
+		useraddress.Address = append(useraddress.Address, reqdata.GetAddress())
+		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["address"], useraddress)
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -48,27 +49,25 @@ func AddAddress(w http.ResponseWriter, req *http.Request) {
 }
 
 func ModifyAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("ModifyAddress")
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var modifyaddr lebangproto.ModifyAddress
-	if !common.Unmarshal(buf, &modifyaddr) {
+	var reqdata lebangproto.ModifyAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(modifyaddr)
-	var user lebangproto.UserInfo
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.Response
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": modifyaddr.GetPhone()}, nil, &user) {
-		user.Address[modifyaddr.GetAddressnumber()] = modifyaddr.Address
-		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": modifyaddr.GetPhone()}, user)
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		useraddress.Address[reqdata.GetAddressnumber()] = reqdata.Address
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, useraddress)
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", modifyaddr.GetPhone())
+		response.Errorcode = "address not exist"
+		logger.PRINTLINE("address not exist: ", reqdata.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -80,27 +79,25 @@ func ModifyAddress(w http.ResponseWriter, req *http.Request) {
 }
 
 func DeleteAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("DeleteAddress")
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var deleteaddr lebangproto.DeleteAddress
-	if !common.Unmarshal(buf, &deleteaddr) {
+	var reqdata lebangproto.DeleteAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(deleteaddr)
-	var userinfo lebangproto.UserInfo
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.Response
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": deleteaddr.GetPhone()}, nil, &userinfo) {
-		userinfo.Address = append(userinfo.Address[:deleteaddr.GetAddressnumber()], userinfo.Address[deleteaddr.GetAddressnumber()+1:]...)
-		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": deleteaddr.GetPhone()}, userinfo)
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		useraddress.Address = append(useraddress.Address[:reqdata.GetAddressnumber()], useraddress.Address[reqdata.GetAddressnumber()+1:]...)
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, useraddress)
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", deleteaddr.GetPhone())
+		response.Errorcode = "address not exist"
+		logger.PRINTLINE("address not exist: ", reqdata.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -112,33 +109,32 @@ func DeleteAddress(w http.ResponseWriter, req *http.Request) {
 }
 
 func DefaultAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("DefaultAddress")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var userinfo lebangproto.UserInfo
-	if !common.Unmarshal(buf, &userinfo) {
+	var reqdata lebangproto.DefaultAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(userinfo)
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.DefaultAddressRes
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": userinfo.GetPhone()}, nil, &userinfo) {
-		for _, node := range userinfo.GetAddress() {
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		for _, node := range useraddress.GetAddress() {
 			if node.GetIsdefault() {
 				response.Address = node
+				break
 			}
 		}
 		if response.Address == nil {
 			response.Errorcode = "no default address"
-			logger.PRINTLINE("no default address: ", userinfo.GetPhone())
+			logger.PRINTLINE("no default address: ", reqdata.GetPhone())
 		}
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", userinfo.GetPhone())
+		response.Errorcode = "no default address"
+		logger.PRINTLINE("no default address: ", reqdata.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -150,32 +146,26 @@ func DefaultAddress(w http.ResponseWriter, req *http.Request) {
 }
 
 func SetDefaultAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("SetDefaultAddress")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var addrinfo lebangproto.ModifyAddress
-	if !common.Unmarshal(buf, &addrinfo) {
+	var reqdata lebangproto.ModifyAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(addrinfo)
-	var userinfo lebangproto.UserInfo
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.DefaultAddressRes
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": addrinfo.GetPhone()}, nil, &userinfo) {
-		for _, node := range userinfo.GetAddress() {
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		for _, node := range useraddress.GetAddress() {
 			if node.GetIsdefault() {
 				node.Isdefault = false
 			}
 		}
-		userinfo.Address[addrinfo.GetAddressnumber()].Isdefault = true
-		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": addrinfo.GetPhone()}, userinfo)
-	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", userinfo.GetPhone())
+		useraddress.Address[reqdata.GetAddressnumber()].Isdefault = true
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, useraddress)
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -187,32 +177,30 @@ func SetDefaultAddress(w http.ResponseWriter, req *http.Request) {
 }
 
 func GetAddress(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("GetAddress")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var userinfo lebangproto.UserInfo
-	if !common.Unmarshal(buf, &userinfo) {
+	var reqdata lebangproto.GetAddressReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(userinfo)
+	var useraddress lebangproto.UserAddress
 	var response lebangproto.GetAddressRes
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": userinfo.GetPhone()}, nil, &userinfo) {
-		if len(userinfo.GetAddress()) == 0 {
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["address"], bson.M{"phone": reqdata.GetPhone()}, nil, &useraddress) {
+		if len(useraddress.GetAddress()) == 0 {
 			response.Errorcode = "no address"
-			logger.PRINTLINE("no address: ", userinfo.GetPhone())
+			logger.PRINTLINE("no address: ", reqdata.GetPhone())
 		} else {
-			for _, node := range userinfo.GetAddress() {
+			for _, node := range useraddress.GetAddress() {
 				response.Address = append(response.Address, node)
 			}
 		}
 	} else {
-		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", userinfo.GetPhone())
+		response.Errorcode = "no address"
+		logger.PRINTLINE("no address: ", reqdata.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)

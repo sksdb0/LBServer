@@ -2,39 +2,6 @@
 // source: LeBangClassification.proto
 // DO NOT EDIT!
 
-/*
-Package lebangproto is a generated protocol buffer package.
-
-It is generated from these files:
-	LeBangClassification.proto
-	LeBangOrder.proto
-	LeBangProto.proto
-
-It has these top-level messages:
-	Classification
-	ClassificationType
-	GetClassificationRes
-	Order
-	GetOrderRes
-	CancelOrder
-	Response
-	SignIn
-	SignInRes
-	SignUp
-	SignUpRes
-	SignUpBak
-	UserAddress
-	IDCode
-	GetIDCode
-	UserInfo
-	GetErrandCommonMerchant
-	ErrandCommonMerchant
-	ResErrandCommonMerchant
-	GetAddressRes
-	ModifyAddress
-	DeleteAddress
-	DefaultAddressRes
-*/
 package lebangproto
 
 import proto "github.com/golang/protobuf/proto"
@@ -46,12 +13,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the proto package it is being compiled against.
-// A compilation error at this line likely means your copy of the
-// proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
-
 type Classification struct {
 	Classification string `protobuf:"bytes,1,opt,name=classification" json:"classification,omitempty"`
 	Labels         string `protobuf:"bytes,2,opt,name=labels" json:"labels,omitempty"`
@@ -61,7 +22,7 @@ type Classification struct {
 func (m *Classification) Reset()                    { *m = Classification{} }
 func (m *Classification) String() string            { return proto.CompactTextString(m) }
 func (*Classification) ProtoMessage()               {}
-func (*Classification) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*Classification) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
 func (m *Classification) GetClassification() string {
 	if m != nil {
@@ -84,16 +45,16 @@ func (m *Classification) GetHint() string {
 	return ""
 }
 
-type ClassificationType struct {
+type GetClassificationReq struct {
 	Typename string `protobuf:"bytes,1,opt,name=typename" json:"typename,omitempty"`
 }
 
-func (m *ClassificationType) Reset()                    { *m = ClassificationType{} }
-func (m *ClassificationType) String() string            { return proto.CompactTextString(m) }
-func (*ClassificationType) ProtoMessage()               {}
-func (*ClassificationType) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (m *GetClassificationReq) Reset()                    { *m = GetClassificationReq{} }
+func (m *GetClassificationReq) String() string            { return proto.CompactTextString(m) }
+func (*GetClassificationReq) ProtoMessage()               {}
+func (*GetClassificationReq) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
 
-func (m *ClassificationType) GetTypename() string {
+func (m *GetClassificationReq) GetTypename() string {
 	if m != nil {
 		return m.Typename
 	}
@@ -108,7 +69,7 @@ type GetClassificationRes struct {
 func (m *GetClassificationRes) Reset()                    { *m = GetClassificationRes{} }
 func (m *GetClassificationRes) String() string            { return proto.CompactTextString(m) }
 func (*GetClassificationRes) ProtoMessage()               {}
-func (*GetClassificationRes) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*GetClassificationRes) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
 
 func (m *GetClassificationRes) GetClassification() *Classification {
 	if m != nil {
@@ -126,24 +87,24 @@ func (m *GetClassificationRes) GetErrorcode() string {
 
 func init() {
 	proto.RegisterType((*Classification)(nil), "lebangproto.Classification")
-	proto.RegisterType((*ClassificationType)(nil), "lebangproto.ClassificationType")
+	proto.RegisterType((*GetClassificationReq)(nil), "lebangproto.GetClassificationReq")
 	proto.RegisterType((*GetClassificationRes)(nil), "lebangproto.GetClassificationRes")
 }
 
-func init() { proto.RegisterFile("LeBangClassification.proto", fileDescriptor0) }
+func init() { proto.RegisterFile("LeBangClassification.proto", fileDescriptor1) }
 
-var fileDescriptor0 = []byte{
-	// 189 bytes of a gzipped FileDescriptorProto
+var fileDescriptor1 = []byte{
+	// 184 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x92, 0xf2, 0x49, 0x75, 0x4a,
 	0xcc, 0x4b, 0x77, 0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x4e, 0x2c, 0xc9, 0xcc, 0xcf,
 	0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0xce, 0x49, 0x4d, 0x4a, 0xcc, 0x4b, 0x07, 0x73,
 	0x94, 0x52, 0xb8, 0xf8, 0x50, 0x15, 0x09, 0xa9, 0x71, 0xf1, 0x25, 0xa3, 0x88, 0x48, 0x30, 0x2a,
 	0x30, 0x6a, 0x70, 0x06, 0xa1, 0x89, 0x0a, 0x89, 0x71, 0xb1, 0xe5, 0x24, 0x26, 0xa5, 0xe6, 0x14,
 	0x4b, 0x30, 0x81, 0xe5, 0xa1, 0x3c, 0x21, 0x21, 0x2e, 0x96, 0x8c, 0xcc, 0xbc, 0x12, 0x09, 0x66,
-	0xb0, 0x28, 0x98, 0xad, 0x64, 0xc0, 0x25, 0x84, 0x6a, 0x4b, 0x48, 0x65, 0x41, 0xaa, 0x90, 0x14,
-	0x17, 0x47, 0x49, 0x65, 0x41, 0x6a, 0x5e, 0x62, 0x6e, 0x2a, 0xd4, 0x0e, 0x38, 0x5f, 0xa9, 0x92,
-	0x4b, 0xc4, 0x3d, 0xb5, 0x04, 0x55, 0x53, 0x50, 0x6a, 0xb1, 0x90, 0x33, 0x56, 0xd7, 0x71, 0x1b,
-	0x49, 0xeb, 0x21, 0xf9, 0x4a, 0x0f, 0x4d, 0x1f, 0xba, 0xd3, 0x65, 0xb8, 0x38, 0x53, 0x8b, 0x8a,
-	0xf2, 0x8b, 0x92, 0xf3, 0x53, 0x52, 0xa1, 0xae, 0x47, 0x08, 0x24, 0xb1, 0x81, 0xcd, 0x30, 0x06,
-	0x04, 0x00, 0x00, 0xff, 0xff, 0xe5, 0x1b, 0xfe, 0xaf, 0x44, 0x01, 0x00, 0x00,
+	0xb0, 0x28, 0x98, 0xad, 0x64, 0xc4, 0x25, 0xe2, 0x9e, 0x5a, 0x82, 0x6a, 0x51, 0x50, 0x6a, 0xa1,
+	0x90, 0x14, 0x17, 0x47, 0x49, 0x65, 0x41, 0x6a, 0x5e, 0x62, 0x6e, 0x2a, 0xd4, 0x16, 0x38, 0x5f,
+	0xa9, 0x12, 0xab, 0x9e, 0x62, 0x21, 0x67, 0xac, 0xee, 0xe3, 0x36, 0x92, 0xd6, 0x43, 0xf2, 0x97,
+	0x1e, 0x9a, 0x3e, 0x74, 0xc7, 0xcb, 0x70, 0x71, 0xa6, 0x16, 0x15, 0xe5, 0x17, 0x25, 0xe7, 0xa7,
+	0xa4, 0x42, 0xdd, 0x8f, 0x10, 0x48, 0x62, 0x03, 0x9b, 0x61, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff,
+	0x8c, 0x5e, 0x4b, 0x50, 0x46, 0x01, 0x00, 0x00,
 }

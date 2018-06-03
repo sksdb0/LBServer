@@ -8,7 +8,7 @@ message Classification{
 	string hint = 3;
 }
 
-message ClassificationType{
+message GetClassificationReq{
 	string typename = 1;
 }
 

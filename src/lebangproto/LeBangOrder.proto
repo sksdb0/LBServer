@@ -1,29 +1,37 @@
 syntax = "proto3";
 
-import "LeBangProto.proto";
+import "LeBangAddress.proto";
 package lebangproto;
 
+
+// model
 message Order{
 	// 用户ID
 	string phone = 1;
 	// 取货地址
-	UserAddress src = 2;
+	Address srcaddress = 2;
 	// 收货地址
-	UserAddress dst = 3;
+	Address dstaddress = 3;
 	// 帮我买内容
 	string content = 4;
 	// 商品类型
 	string classification = 5;
 	// 指定商家
 	string merchant = 6;
-	// 订单类型 普通 加急
-	string deliverytype = 7;
+	// 订单类型 代购 取送
+	string ordertype = 7;
+	// 订单配送类型 普通 加急
+	string deliverytype = 8;
 	// 下单时间
-	int64 ordertime = 8;
+	int64 ordertime = 9;
 	// 配送时间
-	int64 deliverytime = 9;
+	int64 deliverytime = 10;
 	// 订单状态
-	int32 ordestatus = 10;
+	int32 ordestatus = 11;
+}
+
+message GetOrderReq{
+	string phone = 1;
 }
 
 message GetOrderRes{
@@ -31,7 +39,7 @@ message GetOrderRes{
 	string errorcode = 2;
 }
 
-message CancelOrder{
+message CancelOrderReq{
 	string phone = 1;
 	int64 ordertime = 2;
 }

@@ -46,20 +46,18 @@ func UpdateErrandsCommonMerchant(phone string, merchant string) {
 }
 
 func GetErrandsCommonMerchant(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("GetErrandsCommonMerchant")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var reqdata lebangproto.GetErrandCommonMerchant
+	var reqdata lebangproto.GetErrandCommonMerchantReq
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(reqdata)
-	var response lebangproto.ResErrandCommonMerchant
 	var merchant lebangproto.ErrandCommonMerchant
+	var response lebangproto.GetErrandCommonMerchantRes
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["errandscommonmerchant"],
 		bson.M{"phone": reqdata.GetPhone()}, nil, &merchant) {
 		response.Merchant = merchant.GetMerchant()

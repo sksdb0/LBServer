@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message UserAddress{
+	// 用户名
+	string phone = 1;
+	// 常用地址
+	repeated Address address = 2;
+}
+
+message Address{
+	// 用户名
+	string name = 1;
+	// 手机
+	string phone = 2;
+	// 地址名称
+	string title = 3;
+	// 地址
+	string address = 4;
+	// 门牌号
+	string housenumber = 5;
+	// 地址备注
+	string subaddress = 6;
+	// 是否为默认地址
+	bool isdefault = 7;
+}
+
+message GetAddressReq{
+	string phone = 1;
+}
+
+message GetAddressRes{
+	repeated Address address = 1;
+	string errorcode = 2;
+}
+
+message AddAddressReq{
+	string phone = 1;
+	Address address = 2;
+}
+
+message ModifyAddressReq{
+	string phone = 1;
+	int32 addressnumber = 2;
+	Address address = 3;
+}
+
+message DeleteAddressReq{
+	string phone = 1;
+	int32 addressnumber = 2;
+}
+
+message DefaultAddressReq{
+	string phone = 1;
+}
+
+message DefaultAddressRes{
+	Address address = 1;
+	string errorcode = 2;
+}

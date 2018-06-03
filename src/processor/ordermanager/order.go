@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"processor/common"
 	"processor/usermanager"
-	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -29,8 +28,6 @@ func Span(w http.ResponseWriter, req *http.Request) {
 }
 
 func NewOrder(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("DefaultAddress")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
@@ -39,16 +36,17 @@ func NewOrder(w http.ResponseWriter, req *http.Request) {
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	var userinfo lebangproto.UserInfo
+	var user lebangproto.User
 	var response lebangproto.Response
-
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, nil, &userinfo) {
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, nil, &user) {
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
-		userinfo.Ordertimes += 1
+		user.Ordertimes += 1
 
 		usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
-		logger.PRINTLINE(time.Unix(reqdata.GetOrdertime()/1000, 0))
+
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
 	} else {
 		response.Errorcode = "user not exist"
 		logger.PRINTLINE("user not exist: ", reqdata.GetPhone())
@@ -63,29 +61,26 @@ func NewOrder(w http.ResponseWriter, req *http.Request) {
 }
 
 func GetOrder(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("GetOrder")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var userinfo lebangproto.UserInfo
-	if !common.Unmarshal(buf, &userinfo) {
+	var reqdata lebangproto.GetOrderReq
+	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(userinfo)
 	var response lebangproto.GetOrderRes
-
 	if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["order"],
-		bson.M{"phone": userinfo.GetPhone()}, "", nil, &response.Order) {
+		bson.M{"phone": reqdata.GetPhone()}, "-ordertime", nil, &response.Order) {
 		if len(response.Order) == 0 {
 			response.Errorcode = "no order"
-			logger.PRINTLINE("no order: ", userinfo.GetPhone())
+			logger.PRINTLINE("no order: ", reqdata.GetPhone())
 		}
 	} else {
 		response.Errorcode = "user not exist"
-		logger.PRINTLINE("user not exist: ", userinfo.GetPhone())
+		logger.PRINTLINE("user not exist: ", reqdata.GetPhone())
 	}
 
 	sendbuf, err := json.Marshal(response)
@@ -97,18 +92,16 @@ func GetOrder(w http.ResponseWriter, req *http.Request) {
 }
 
 func CancelOrder(w http.ResponseWriter, req *http.Request) {
-	logger.PRINTLINE("CancelOrder")
-
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var reqdata lebangproto.CancelOrder
+	var reqdata lebangproto.CancelOrderReq
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
+	logger.PRINTLINE(reqdata.GetPhone())
 
-	logger.PRINTLINE(reqdata)
 	var response lebangproto.Response
 	var order lebangproto.Order
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["order"], bson.M{"phone": reqdata.GetPhone()}, nil, &order) {
