@@ -31,9 +31,11 @@ It has these top-level messages:
 	Order
 	GetOrderReq
 	GetOrderRes
+	ModifyOrderReq
 	CancelOrderReq
 	Response
 	GetIDCodeReq
+	LoginReq
 	IDCode
 	User
 */

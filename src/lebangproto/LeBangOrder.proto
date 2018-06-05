@@ -39,6 +39,11 @@ message GetOrderRes{
 	string errorcode = 2;
 }
 
+message ModifyOrderReq{
+	string phone = 1;
+	Order order = 2;
+}
+
 message CancelOrderReq{
 	string phone = 1;
 	int64 ordertime = 2;

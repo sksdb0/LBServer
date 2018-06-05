@@ -1,7 +1,7 @@
 package usermanager
 
 import (
-	"alisms"
+	//	"alisms"
 	"config"
 	"dbmanager"
 	"encoding/json"
@@ -20,6 +20,7 @@ import (
 
 func Init() {
 	// idcode and authentication
+	lebangnet.RouteRegister("/login", Login)
 	lebangnet.RouteRegister("/getidcode", GetIDCode)
 	lebangnet.RouteRegister("/authentication", Authentication)
 
@@ -119,10 +120,35 @@ func GetIDCode(w http.ResponseWriter, req *http.Request) {
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["idcode"], &idcodeinfo)
 	}
 
-	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
-		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	//	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
+	//		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	//	if err != nil {
+	//		logger.PRINTLINE("dysms.SendSms", err)
+	//	}
+
+	sendbuf, err := json.Marshal(response)
 	if err != nil {
-		logger.PRINTLINE("dysms.SendSms", err)
+		logger.PRINTLINE("Marshal response error: ", err)
+		return
+	}
+
+	io.WriteString(w, string(sendbuf))
+}
+
+func Login(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+	buf := make([]byte, req.ContentLength)
+	common.GetBuffer(req, buf)
+
+	var reqdata lebangproto.LoginReq
+	if !common.Unmarshal(buf, &reqdata) {
+		return
+	}
+	logger.PRINTLINE(reqdata.GetPhone())
+
+	var response lebangproto.Response
+	if reqdata.GetPhone() != "123456" {
+		response.Errorcode = "user not exist"
 	}
 
 	sendbuf, err := json.Marshal(response)

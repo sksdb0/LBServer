@@ -11,6 +11,11 @@ message GetIDCodeReq{
 	string phone = 1;
 }
 
+// request
+message LoginReq{
+	string phone = 1;
+}
+
 // model
 message IDCode{
 	string phone = 1;
