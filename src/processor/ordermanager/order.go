@@ -4,8 +4,8 @@ import (
 	"config"
 	"dbmanager"
 	"encoding/json"
+	"httprouter"
 	"io"
-	"lebangnet"
 	"lebangproto"
 	"logger"
 	"net/http"
@@ -22,25 +22,25 @@ type OrderManager struct {
 	idmutex sync.RWMutex
 }
 
-func Init() {
+func Init(router *httprouter.Router) {
 	ordermanager = &OrderManager{}
-	lebangnet.RouteRegister("/neworder", ordermanager.NewOrder)
-	lebangnet.RouteRegister("/getorder", ordermanager.GetOrder)
-	lebangnet.RouteRegister("/getallorder", ordermanager.GetAllOrder)
-	lebangnet.RouteRegister("/cancelorder", ordermanager.CancelOrder)
-	lebangnet.RouteRegister("/modifyorder", ordermanager.ModifyOrder)
+	router.POST("/neworder", ordermanager.NewOrder)
+	router.POST("/getorder", ordermanager.GetOrder)
+	router.POST("/getallorder", ordermanager.GetAllOrder)
+	router.POST("/cancelorder", ordermanager.CancelOrder)
+	router.POST("/modifyorder", ordermanager.ModifyOrder)
 
-	lebangnet.RouteRegister("/", ordermanager.Span)
+	router.POST("/", ordermanager.Span)
 }
 
-func (this *OrderManager) Span(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) Span(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 
 	logger.PRINTLINE("aaaaaaaaaaa")
 }
 
-func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 
@@ -61,7 +61,6 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request) {
 		user.Ordertimes += 1
 
 		usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
-
 		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
 	} else {
 		response.Errorcode = "user not exist"
@@ -76,7 +75,7 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func (this *OrderManager) GetOrder(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) GetOrder(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 
@@ -110,7 +109,7 @@ func (this *OrderManager) GetOrder(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func (this *OrderManager) GetAllOrder(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) GetAllOrder(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 
@@ -140,7 +139,7 @@ func (this *OrderManager) GetAllOrder(w http.ResponseWriter, req *http.Request) 
 	io.WriteString(w, string(sendbuf))
 }
 
-func (this *OrderManager) ModifyOrder(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) ModifyOrder(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 
@@ -173,7 +172,7 @@ func (this *OrderManager) ModifyOrder(w http.ResponseWriter, req *http.Request) 
 	io.WriteString(w, string(sendbuf))
 }
 
-func (this *OrderManager) CancelOrder(w http.ResponseWriter, req *http.Request) {
+func (this *OrderManager) CancelOrder(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	this.idmutex.Lock()
 	defer this.idmutex.Unlock()
 

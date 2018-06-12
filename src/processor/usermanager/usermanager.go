@@ -1,13 +1,13 @@
 package usermanager
 
 import (
-	"alisms"
+	//	"alisms"
 	"config"
 	"dbmanager"
 	"encoding/json"
 	"fmt"
+	"httprouter"
 	"io"
-	"lebangnet"
 	"lebangproto"
 	"logger"
 	"math/rand"
@@ -18,24 +18,24 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func Init() {
+func Init(router *httprouter.Router) {
 	// idcode and authentication
-	lebangnet.RouteRegister("/login", Login)
-	lebangnet.RouteRegister("/getidcode", GetIDCode)
-	lebangnet.RouteRegister("/authentication", Authentication)
+	router.POST("/login", Login)
+	router.POST("/getidcode", GetIDCode)
+	router.POST("/authentication", Authentication)
 
 	// merchant
-	lebangnet.RouteRegister("/geterrandscommonmerchant", GetErrandsCommonMerchant)
+	router.POST("/geterrandscommonmerchant", GetErrandsCommonMerchant)
 
-	lebangnet.RouteRegister("/getaddress", GetAddress)
-	lebangnet.RouteRegister("/addaddress", AddAddress)
-	lebangnet.RouteRegister("/modifyaddress", ModifyAddress)
-	lebangnet.RouteRegister("/deleteaddress", DeleteAddress)
-	lebangnet.RouteRegister("/setdefaultaddress", SetDefaultAddress)
-	lebangnet.RouteRegister("/defaultaddress", DefaultAddress)
+	router.POST("/getaddress", GetAddress)
+	router.POST("/addaddress", AddAddress)
+	router.POST("/modifyaddress", ModifyAddress)
+	router.POST("/deleteaddress", DeleteAddress)
+	router.POST("/setdefaultaddress", SetDefaultAddress)
+	router.POST("/defaultaddress", DefaultAddress)
 }
 
-func Authentication(w http.ResponseWriter, req *http.Request) {
+func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
@@ -89,7 +89,7 @@ func Authentication(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func GetIDCode(w http.ResponseWriter, req *http.Request) {
+func GetIDCode(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
@@ -120,11 +120,11 @@ func GetIDCode(w http.ResponseWriter, req *http.Request) {
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["idcode"], &idcodeinfo)
 	}
 
-	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
-		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
-	if err != nil {
-		logger.PRINTLINE("dysms.SendSms", err)
-	}
+	//	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
+	//		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	//	if err != nil {
+	//		logger.PRINTLINE("dysms.SendSms", err)
+	//	}
 
 	sendbuf, err := json.Marshal(response)
 	if err != nil {
@@ -135,7 +135,7 @@ func GetIDCode(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func Login(w http.ResponseWriter, req *http.Request) {
+func Login(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)

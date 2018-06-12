@@ -2,6 +2,7 @@ package db
 
 import (
 	"logger"
+	"strings"
 
 	"github.com/Unknwon/goconfig"
 )
@@ -12,10 +13,14 @@ type DB struct {
 	MongoDBLocalPort    string
 	MongoDBLocalAddress string
 
-	CollMap        map[string]string
-	Classification map[string]string
+	CollMap map[string]string
 
-	SubClassification map[string]map[string]string
+	Classification     map[string]string
+	SubClassification  map[string]string
+	ClassificationView map[string]string
+
+	ErrandsClassification    map[string]string
+	ErrandsSubClassification map[string]map[string]string
 }
 
 func (this *DB) Load() bool {
@@ -33,18 +38,24 @@ func (this *DB) Load() bool {
 
 	this.CollMap, _ = dbcfg.GetSection("CollMap")
 
-	this.Classification, _ = dbcfg.GetSection("Classification")
-	for value, _ := range this.Classification {
-		this.SubClassification[value], _ = dbcfg.GetSection(value)
+	this.ErrandsClassification, _ = dbcfg.GetSection("ErrandsClassification")
+	errandsLabels := strings.Split(this.ErrandsClassification["labels"], " ")
+	for _, classification := range errandsLabels {
+		this.ErrandsSubClassification[classification], _ = dbcfg.GetSection(classification)
 	}
 
+	this.Classification, _ = dbcfg.GetSection("Classification")
+	this.SubClassification, _ = dbcfg.GetSection("SubClassification")
+	this.ClassificationView, _ = dbcfg.GetSection("ClassificationView")
 	return true
 }
 
 func NewDB() *DB {
 	return &DB{
-		CollMap:           make(map[string]string),
-		Classification:    make(map[string]string),
-		SubClassification: make(map[string]map[string]string),
+		CollMap:                  make(map[string]string),
+		Classification:           make(map[string]string),
+		SubClassification:        make(map[string]string),
+		ErrandsClassification:    make(map[string]string),
+		ErrandsSubClassification: make(map[string]map[string]string),
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"config"
 	"dbmanager"
 	"encoding/json"
+	"httprouter"
 	"io"
 	"lebangproto"
 	"logger"
@@ -45,7 +46,7 @@ func UpdateErrandsCommonMerchant(phone string, merchant string) {
 	}
 }
 
-func GetErrandsCommonMerchant(w http.ResponseWriter, req *http.Request) {
+func GetErrandsCommonMerchant(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)

@@ -130,12 +130,14 @@ func (this *MongoManager) Update(db string, coll string, query bson.M, i interfa
 	return true
 }
 
-func (this *MongoManager) Insert(db string, coll string, i interface{}) {
+func (this *MongoManager) Insert(db string, coll string, i interface{}) bool {
 	c := this.GetDB(db).C(coll)
 	err := c.Insert(i)
 	if err != nil {
-		panic(err)
+		logger.LOGLINE(err)
+		return false
 	}
+	return true
 }
 
 func (this *MongoManager) Remove(db string, coll string, i interface{}) {

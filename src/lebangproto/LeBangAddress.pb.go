@@ -8,7 +8,9 @@ Package lebangproto is a generated protocol buffer package.
 It is generated from these files:
 	LeBangAddress.proto
 	LeBangClassification.proto
+	LeBangErrandsClassification.proto
 	LeBangErrandsMerchant.proto
+	LeBangFeedBack.proto
 	LeBangOrder.proto
 	LeBangUser.proto
 
@@ -22,12 +24,20 @@ It has these top-level messages:
 	DeleteAddressReq
 	DefaultAddressReq
 	DefaultAddressRes
+	ClassificationView
 	Classification
-	GetClassificationReq
-	GetClassificationRes
+	ClassificationRes
+	SubClassification
+	GetSubClassificationViewReq
+	GetSubClassificationRes
+	MainErrandsClassification
+	ErrandsClassification
+	GetErrandsClassificationReq
+	GetErrandsClassificationRes
 	GetErrandCommonMerchantReq
 	ErrandCommonMerchant
 	GetErrandCommonMerchantRes
+	FeedBack
 	Order
 	GetOrderReq
 	GetOrderRes

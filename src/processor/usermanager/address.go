@@ -4,6 +4,7 @@ import (
 	"config"
 	"dbmanager"
 	"encoding/json"
+	"httprouter"
 	"io"
 	"lebangproto"
 	"logger"
@@ -13,7 +14,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func AddAddress(w http.ResponseWriter, req *http.Request) {
+func AddAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
@@ -48,7 +49,7 @@ func AddAddress(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func ModifyAddress(w http.ResponseWriter, req *http.Request) {
+func ModifyAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
@@ -78,7 +79,7 @@ func ModifyAddress(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func DeleteAddress(w http.ResponseWriter, req *http.Request) {
+func DeleteAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 
 	buf := make([]byte, req.ContentLength)
@@ -108,7 +109,7 @@ func DeleteAddress(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func DefaultAddress(w http.ResponseWriter, req *http.Request) {
+func DefaultAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
@@ -145,7 +146,7 @@ func DefaultAddress(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func SetDefaultAddress(w http.ResponseWriter, req *http.Request) {
+func SetDefaultAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
@@ -176,7 +177,7 @@ func SetDefaultAddress(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func GetAddress(w http.ResponseWriter, req *http.Request) {
+func GetAddress(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)

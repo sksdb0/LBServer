@@ -2,17 +2,39 @@ syntax = "proto3";
 
 package lebangproto;
 
+
+message ClassificationView{
+	string name = 1;
+	string typeids = 2;
+} 
+
 message Classification{
-	string classification = 1;
-	string labels = 2;
-	string hint = 3;
+	string name = 1;
+	int32 typeid = 2;
 }
 
-message GetClassificationReq{
-	string typename = 1;
+message ClassificationRes{
+	string name = 1;
+	int32 typeid = 2;
+	repeated SubClassification classification = 3;
+} 
+
+message SubClassification{
+	// 父类型id
+	int32 parenttypeid = 1;
+	// 节点类型id
+	int32 typeid = 2;
+	// 类型名称
+	string name = 3;
+	// 图片名称
+	string image = 4;
 }
 
-message GetClassificationRes{
-	Classification classification = 1;
+message GetSubClassificationViewReq{
+	string name = 1;
+}
+
+message GetSubClassificationRes{
+	repeated ClassificationRes classification = 1;
 	string errorcode = 2;
 }

@@ -20,7 +20,7 @@ type GetErrandCommonMerchantReq struct {
 func (m *GetErrandCommonMerchantReq) Reset()                    { *m = GetErrandCommonMerchantReq{} }
 func (m *GetErrandCommonMerchantReq) String() string            { return proto.CompactTextString(m) }
 func (*GetErrandCommonMerchantReq) ProtoMessage()               {}
-func (*GetErrandCommonMerchantReq) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (*GetErrandCommonMerchantReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 func (m *GetErrandCommonMerchantReq) GetPhone() string {
 	if m != nil {
@@ -37,7 +37,7 @@ type ErrandCommonMerchant struct {
 func (m *ErrandCommonMerchant) Reset()                    { *m = ErrandCommonMerchant{} }
 func (m *ErrandCommonMerchant) String() string            { return proto.CompactTextString(m) }
 func (*ErrandCommonMerchant) ProtoMessage()               {}
-func (*ErrandCommonMerchant) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (*ErrandCommonMerchant) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 func (m *ErrandCommonMerchant) GetPhone() string {
 	if m != nil {
@@ -61,7 +61,7 @@ type GetErrandCommonMerchantRes struct {
 func (m *GetErrandCommonMerchantRes) Reset()                    { *m = GetErrandCommonMerchantRes{} }
 func (m *GetErrandCommonMerchantRes) String() string            { return proto.CompactTextString(m) }
 func (*GetErrandCommonMerchantRes) ProtoMessage()               {}
-func (*GetErrandCommonMerchantRes) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
+func (*GetErrandCommonMerchantRes) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
 
 func (m *GetErrandCommonMerchantRes) GetMerchant() []string {
 	if m != nil {
@@ -83,9 +83,9 @@ func init() {
 	proto.RegisterType((*GetErrandCommonMerchantRes)(nil), "lebangproto.GetErrandCommonMerchantRes")
 }
 
-func init() { proto.RegisterFile("LeBangErrandsMerchant.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("LeBangErrandsMerchant.proto", fileDescriptor3) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor3 = []byte{
 	// 160 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x92, 0xf6, 0x49, 0x75, 0x4a,
 	0xcc, 0x4b, 0x77, 0x2d, 0x2a, 0x4a, 0xcc, 0x4b, 0x29, 0xf6, 0x4d, 0x2d, 0x4a, 0xce, 0x48, 0xcc,

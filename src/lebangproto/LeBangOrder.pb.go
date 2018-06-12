@@ -42,7 +42,7 @@ type Order struct {
 func (m *Order) Reset()                    { *m = Order{} }
 func (m *Order) String() string            { return proto.CompactTextString(m) }
 func (*Order) ProtoMessage()               {}
-func (*Order) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (*Order) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 func (m *Order) GetPhone() string {
 	if m != nil {
@@ -128,7 +128,7 @@ type GetOrderReq struct {
 func (m *GetOrderReq) Reset()                    { *m = GetOrderReq{} }
 func (m *GetOrderReq) String() string            { return proto.CompactTextString(m) }
 func (*GetOrderReq) ProtoMessage()               {}
-func (*GetOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
+func (*GetOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
 
 func (m *GetOrderReq) GetPhone() string {
 	if m != nil {
@@ -145,7 +145,7 @@ type GetOrderRes struct {
 func (m *GetOrderRes) Reset()                    { *m = GetOrderRes{} }
 func (m *GetOrderRes) String() string            { return proto.CompactTextString(m) }
 func (*GetOrderRes) ProtoMessage()               {}
-func (*GetOrderRes) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
+func (*GetOrderRes) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
 
 func (m *GetOrderRes) GetOrder() []*Order {
 	if m != nil {
@@ -169,7 +169,7 @@ type ModifyOrderReq struct {
 func (m *ModifyOrderReq) Reset()                    { *m = ModifyOrderReq{} }
 func (m *ModifyOrderReq) String() string            { return proto.CompactTextString(m) }
 func (*ModifyOrderReq) ProtoMessage()               {}
-func (*ModifyOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
+func (*ModifyOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
 
 func (m *ModifyOrderReq) GetPhone() string {
 	if m != nil {
@@ -193,7 +193,7 @@ type CancelOrderReq struct {
 func (m *CancelOrderReq) Reset()                    { *m = CancelOrderReq{} }
 func (m *CancelOrderReq) String() string            { return proto.CompactTextString(m) }
 func (*CancelOrderReq) ProtoMessage()               {}
-func (*CancelOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
+func (*CancelOrderReq) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
 
 func (m *CancelOrderReq) GetPhone() string {
 	if m != nil {
@@ -217,9 +217,9 @@ func init() {
 	proto.RegisterType((*CancelOrderReq)(nil), "lebangproto.CancelOrderReq")
 }
 
-func init() { proto.RegisterFile("LeBangOrder.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("LeBangOrder.proto", fileDescriptor5) }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor5 = []byte{
 	// 343 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x84, 0x92, 0xdf, 0x4a, 0xc3, 0x30,
 	0x14, 0xc6, 0xe9, 0x6a, 0xb7, 0xf5, 0x54, 0x06, 0xc6, 0x5d, 0x84, 0x21, 0x52, 0x2a, 0x48, 0xaf,

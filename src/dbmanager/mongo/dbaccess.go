@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"lebangproto"
 	"logger"
-	"model"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type MongoManager struct {
@@ -19,8 +21,93 @@ type MongoManager struct {
 	lockGuard sync.Mutex
 }
 
-func (this *MongoManager) Init(addrs string, port string) error {
+func (this *MongoManager) updateErrandsMainClassification() {
+	if !this.IsCollExist(config.DB().DBName, config.DB().CollMap["errandsclassification"]) {
+		this.Insert(config.DB().DBName, config.DB().CollMap["errandsclassification"],
+			&lebangproto.ErrandsClassification{Classification: "main",
+				Labels: config.DB().ErrandsClassification["labels"],
+				Hint:   config.DB().ErrandsClassification["hint"]})
+	} else {
+		this.Update(config.DB().DBName, config.DB().CollMap["errandsclassification"],
+			bson.M{"Classification": "main"},
+			&lebangproto.ErrandsClassification{Classification: "main",
+				Labels: config.DB().ErrandsClassification["labels"],
+				Hint:   config.DB().ErrandsClassification["hint"]})
+	}
+}
 
+func (this *MongoManager) updateErrandsSubClassification() {
+	errandsLabels := strings.Split(config.DB().ErrandsClassification["labels"], " ")
+	for _, classification := range errandsLabels {
+		if !this.IsExist(config.DB().DBName, config.DB().CollMap["errandssubclassification"], bson.M{"classification": classification}) {
+			this.Insert(config.DB().DBName, config.DB().CollMap["errandssubclassification"],
+				&lebangproto.ErrandsClassification{Classification: classification,
+					Labels: config.DB().ErrandsSubClassification[classification]["labels"],
+					Hint:   config.DB().ErrandsSubClassification[classification]["hint"]})
+		} else {
+			this.Update(config.DB().DBName, config.DB().CollMap["errandssubclassification"],
+				bson.M{"classification": classification},
+				&lebangproto.ErrandsClassification{Classification: classification,
+					Labels: config.DB().ErrandsSubClassification[classification]["labels"],
+					Hint:   config.DB().ErrandsSubClassification[classification]["hint"]})
+		}
+	}
+}
+
+func (this *MongoManager) updateClassificationView() {
+	for name, types := range config.DB().ClassificationView {
+		if !this.IsExist(config.DB().DBName, config.DB().CollMap["classificationview"], bson.M{"name": name}) {
+			this.Insert(config.DB().DBName, config.DB().CollMap["classificationview"],
+				&lebangproto.ClassificationView{Name: name, Typeids: types})
+		} else {
+			this.Update(config.DB().DBName, config.DB().CollMap["classificationview"],
+				bson.M{"name": name},
+				&lebangproto.ClassificationView{Name: name, Typeids: types})
+		}
+	}
+}
+
+func (this *MongoManager) updateClassification() {
+	for name, typeidstr := range config.DB().Classification {
+		if !this.IsExist(config.DB().DBName, config.DB().CollMap["classification"], bson.M{"name": name}) {
+			typeid, _ := strconv.Atoi(typeidstr)
+			this.Insert(config.DB().DBName, config.DB().CollMap["classification"],
+				&lebangproto.Classification{Name: name, Typeid: int32(typeid)})
+		} else {
+			typeid, _ := strconv.Atoi(typeidstr)
+			this.Update(config.DB().DBName, config.DB().CollMap["classification"],
+				bson.M{"name": name},
+				&lebangproto.Classification{Name: name, Typeid: int32(typeid)})
+		}
+	}
+}
+
+func (this *MongoManager) updateSubClassification() {
+	for name, subinfostr := range config.DB().SubClassification {
+		if !this.IsExist(config.DB().DBName, config.DB().CollMap["subclassification"], bson.M{"name": name}) {
+			subinfo := strings.Split(subinfostr, " ")
+			parenttypeid, _ := strconv.Atoi(subinfo[0])
+			typeid, _ := strconv.Atoi(subinfo[1])
+			this.Insert(config.DB().DBName, config.DB().CollMap["subclassification"],
+				&lebangproto.SubClassification{Name: name,
+					Typeid:       int32(typeid),
+					Parenttypeid: int32(parenttypeid),
+					Image:        subinfo[2]})
+		} else {
+			subinfo := strings.Split(subinfostr, " ")
+			parenttypeid, _ := strconv.Atoi(subinfo[0])
+			typeid, _ := strconv.Atoi(subinfo[1])
+			this.Update(config.DB().DBName, config.DB().CollMap["subclassification"],
+				bson.M{"name": name},
+				&lebangproto.SubClassification{Name: name,
+					Typeid:       int32(typeid),
+					Parenttypeid: int32(parenttypeid),
+					Image:        subinfo[2]})
+		}
+	}
+}
+
+func (this *MongoManager) Init(addrs string, port string) error {
 	addr := fmt.Sprintf("%s:%s", addrs, port)
 
 	session, err := mgo.Dial(addr)
@@ -34,18 +121,16 @@ func (this *MongoManager) Init(addrs string, port string) error {
 		logger.LOGLINE("mongodb connect ", addrs, " success!")
 	}
 
-	if !this.IsCollExist(config.DB().DBName, config.DB().CollMap["classification"]) {
-		for classificationName, _ := range config.DB().Classification {
-			this.Insert(config.DB().DBName, config.DB().CollMap["classification"],
-				&model.Classification{Name: classificationName})
-
-			this.Insert(config.DB().DBName, config.DB().CollMap["subclassification"],
-				&lebangproto.Classification{Classification: classificationName,
-					Labels: config.DB().SubClassification[classificationName]["labels"],
-					Hint:   config.DB().SubClassification[classificationName]["hint"]})
-		}
-
-	}
+	// update errands main classification
+	this.updateErrandsMainClassification()
+	// update errands sub classification
+	this.updateErrandsSubClassification()
+	// update classificationview
+	this.updateClassificationView()
+	// update classification
+	this.updateClassification()
+	// update sub classification
+	this.updateSubClassification()
 
 	if len(this.session) > 0 {
 		return nil

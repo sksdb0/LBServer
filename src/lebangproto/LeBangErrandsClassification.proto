@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message MainErrandsClassification{
+	string name = 1;
+}
+
+message ErrandsClassification{
+	string classification = 1;
+	string labels = 2;
+	string hint = 3;
+}
+
+message GetErrandsClassificationReq{
+	string typename = 1;
+}
+
+message GetErrandsClassificationRes{
+	ErrandsClassification classification = 1;
+	string errorcode = 2;
+}

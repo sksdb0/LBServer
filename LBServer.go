@@ -3,11 +3,8 @@ package main
 import (
 	"config"
 	"dbmanager"
-	"lebangnet"
 	"logger"
-	"processor/classificationmanager"
-	"processor/ordermanager"
-	"processor/usermanager"
+	"processor"
 )
 
 func main() {
@@ -28,10 +25,7 @@ func main() {
 	}
 	defer dbmanager.Close()
 
-	lebangnet.Init()
-	usermanager.Init()
-	ordermanager.Init()
-	classificationmanager.Init()
+	//	dbmanager.GetMongo().InitFile()
 
-	lebangnet.Run()
+	processor.Init()
 }

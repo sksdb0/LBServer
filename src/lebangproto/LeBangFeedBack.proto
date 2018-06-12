@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package lebangproto;
+
+message FeedBack{
+	// 用户名
+	string phone = 1;
+	// 意见及建议
+	string feedback = 2;
+}
+
+

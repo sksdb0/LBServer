@@ -20,7 +20,7 @@ type Response struct {
 func (m *Response) Reset()                    { *m = Response{} }
 func (m *Response) String() string            { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()               {}
-func (*Response) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*Response) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
 
 func (m *Response) GetErrorcode() string {
 	if m != nil {
@@ -37,7 +37,7 @@ type GetIDCodeReq struct {
 func (m *GetIDCodeReq) Reset()                    { *m = GetIDCodeReq{} }
 func (m *GetIDCodeReq) String() string            { return proto.CompactTextString(m) }
 func (*GetIDCodeReq) ProtoMessage()               {}
-func (*GetIDCodeReq) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (*GetIDCodeReq) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
 
 func (m *GetIDCodeReq) GetPhone() string {
 	if m != nil {
@@ -54,7 +54,7 @@ type LoginReq struct {
 func (m *LoginReq) Reset()                    { *m = LoginReq{} }
 func (m *LoginReq) String() string            { return proto.CompactTextString(m) }
 func (*LoginReq) ProtoMessage()               {}
-func (*LoginReq) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (*LoginReq) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
 
 func (m *LoginReq) GetPhone() string {
 	if m != nil {
@@ -73,7 +73,7 @@ type IDCode struct {
 func (m *IDCode) Reset()                    { *m = IDCode{} }
 func (m *IDCode) String() string            { return proto.CompactTextString(m) }
 func (*IDCode) ProtoMessage()               {}
-func (*IDCode) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (*IDCode) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
 
 func (m *IDCode) GetPhone() string {
 	if m != nil {
@@ -117,7 +117,7 @@ type User struct {
 func (m *User) Reset()                    { *m = User{} }
 func (m *User) String() string            { return proto.CompactTextString(m) }
 func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (*User) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{4} }
 
 func (m *User) GetPhone() string {
 	if m != nil {
@@ -176,9 +176,9 @@ func init() {
 	proto.RegisterType((*User)(nil), "lebangproto.User")
 }
 
-func init() { proto.RegisterFile("LeBangUser.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("LeBangUser.proto", fileDescriptor6) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor6 = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x74, 0x91, 0xdd, 0x4a, 0xc4, 0x40,
 	0x0c, 0x85, 0xa9, 0xfd, 0xb1, 0x8d, 0x8b, 0x2c, 0xc1, 0x8b, 0x22, 0x22, 0xa5, 0x88, 0xf4, 0xca,
