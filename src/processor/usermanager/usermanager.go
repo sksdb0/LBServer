@@ -1,7 +1,7 @@
 package usermanager
 
 import (
-	//	"alisms"
+	"alisms"
 	"config"
 	"dbmanager"
 	"encoding/json"
@@ -120,11 +120,11 @@ func GetIDCode(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["idcode"], &idcodeinfo)
 	}
 
-	//	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
-	//		"LeBang", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
-	//	if err != nil {
-	//		logger.PRINTLINE("dysms.SendSms", err)
-	//	}
+	err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, reqdata.GetPhone(),
+		"乐帮跑腿", fmt.Sprintf("{code:%s}", idcodeinfo.Code), "SMS_135792492")
+	if err != nil {
+		logger.PRINTLINE("dysms.SendSms", err)
+	}
 
 	sendbuf, err := json.Marshal(response)
 	if err != nil {
