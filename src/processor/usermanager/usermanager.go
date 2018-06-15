@@ -58,7 +58,7 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 			durationsecond := time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds()
 			logger.PRINTLINE(durationsecond)
 			response.Errorcode = "验证码超时"
-			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
+			logger.PRINTLINE("authentication error time out: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
 		} else {
 			var userdata lebangproto.User
 			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],

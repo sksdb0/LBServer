@@ -22,6 +22,7 @@ type MongoManager struct {
 }
 
 func (this *MongoManager) updateErrandsMainClassification() {
+	logger.PRINTLINE("update errands main classification")
 	if !this.IsCollExist(config.DB().DBName, config.DB().CollMap["errandsclassification"]) {
 		this.Insert(config.DB().DBName, config.DB().CollMap["errandsclassification"],
 			&lebangproto.ErrandsClassification{Classification: "main",
@@ -37,6 +38,7 @@ func (this *MongoManager) updateErrandsMainClassification() {
 }
 
 func (this *MongoManager) updateErrandsSubClassification() {
+	logger.PRINTLINE("errands sub classification")
 	errandsLabels := strings.Split(config.DB().ErrandsClassification["labels"], " ")
 	for _, classification := range errandsLabels {
 		if !this.IsExist(config.DB().DBName, config.DB().CollMap["errandssubclassification"], bson.M{"classification": classification}) {
@@ -55,6 +57,7 @@ func (this *MongoManager) updateErrandsSubClassification() {
 }
 
 func (this *MongoManager) updateClassificationView() {
+	logger.PRINTLINE("update classificationview")
 	for name, types := range config.DB().ClassificationView {
 		if !this.IsExist(config.DB().DBName, config.DB().CollMap["classificationview"], bson.M{"name": name}) {
 			this.Insert(config.DB().DBName, config.DB().CollMap["classificationview"],
@@ -68,6 +71,7 @@ func (this *MongoManager) updateClassificationView() {
 }
 
 func (this *MongoManager) updateClassification() {
+	logger.PRINTLINE("update classification")
 	for name, typeidstr := range config.DB().Classification {
 		if !this.IsExist(config.DB().DBName, config.DB().CollMap["classification"], bson.M{"name": name}) {
 			typeid, _ := strconv.Atoi(typeidstr)
@@ -83,6 +87,7 @@ func (this *MongoManager) updateClassification() {
 }
 
 func (this *MongoManager) updateSubClassification() {
+	logger.PRINTLINE("update sub classification")
 	for name, subinfostr := range config.DB().SubClassification {
 		if !this.IsExist(config.DB().DBName, config.DB().CollMap["subclassification"], bson.M{"name": name}) {
 			subinfo := strings.Split(subinfostr, " ")
