@@ -105,7 +105,7 @@ func GetIDCode(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	if dbmanager.GetMongo().IsExist(config.DB().DBName, config.DB().CollMap["idcode"], bson.M{"phone": reqdata.GetPhone()}) {
 		idcodeinfo = lebangproto.IDCode{
 			Phone: reqdata.GetPhone(),
-			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(999999)),
+			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(899999)+100000),
 			Time:  time.Now().Unix() * 1000,
 		}
 		logger.PRINTLINE("exist", idcodeinfo.GetCode())
@@ -113,7 +113,7 @@ func GetIDCode(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	} else {
 		idcodeinfo = lebangproto.IDCode{
 			Phone: reqdata.GetPhone(),
-			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(999999)),
+			Code:  fmt.Sprintf("%06d", rand.New(rand.NewSource(time.Now().UnixNano())).Intn(899999)+100000),
 			Time:  time.Now().Unix() * 1000,
 		}
 		logger.PRINTLINE("not exist", idcodeinfo.GetCode())
