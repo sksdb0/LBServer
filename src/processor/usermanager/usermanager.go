@@ -67,9 +67,7 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 				}
 				dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userdata)
 			}
-		}
-
-		if idcode.GetCode() != reqdata.GetCode() {
+		} else if idcode.GetCode() != reqdata.GetCode() {
 			response.Errorcode = "验证码错误"
 			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
 		} else if time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds() > 90 {
