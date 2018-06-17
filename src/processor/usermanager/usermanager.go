@@ -51,7 +51,7 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["idcode"],
 		bson.M{"phone": reqdata.GetPhone()}, nil, &idcode) {
 		logger.PRINTLINE(idcode.GetCode(), reqdata.GetCode())
-		if idcode.GetPhone() == "13683330861" && idcode.GetCode() == "54321" {
+		if reqdata.GetPhone() == "13683330861" && reqdata.GetCode() == "54321" {
 			var userdata lebangproto.User
 			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
 				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
