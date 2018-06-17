@@ -51,6 +51,24 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["idcode"],
 		bson.M{"phone": reqdata.GetPhone()}, nil, &idcode) {
 		logger.PRINTLINE(idcode.GetCode(), reqdata.GetCode())
+		if idcode.GetPhone() == "13683330861" && idcode.GetCode() == "54321" {
+			var userdata lebangproto.User
+			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
+				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
+				logger.PRINTLINE("update")
+				userdata.Lastsignintime = reqdata.GetTime()
+				dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, userdata)
+			} else {
+				logger.PRINTLINE("insert")
+				userdata := lebangproto.User{
+					Phone:          reqdata.GetPhone(),
+					Registertime:   reqdata.GetTime(),
+					Lastsignintime: reqdata.GetTime(),
+				}
+				dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userdata)
+			}
+		}
+
 		if idcode.GetCode() != reqdata.GetCode() {
 			response.Errorcode = "验证码错误"
 			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
