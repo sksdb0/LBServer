@@ -188,7 +188,8 @@ func (this *OrderManager) CancelOrder(w http.ResponseWriter, req *http.Request, 
 
 	var response lebangproto.Response
 	var order lebangproto.Order
-	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["order"], bson.M{"phone": reqdata.GetPhone()}, nil, &order) {
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["order"],
+		bson.M{"phone": reqdata.GetPhone(), "ordertime": reqdata.GetOrdertime()}, nil, &order) {
 		dbmanager.GetMongo().Remove(config.DB().DBName, config.DB().CollMap["order"], order)
 	} else {
 		response.Errorcode = "order not exist"
