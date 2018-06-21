@@ -13,6 +13,7 @@ type config struct {
 	HttpPort string
 	CertFile string
 	KeyFile  string
+	Manager  string
 
 	AccessKeyID  string
 	AccessSecret string
@@ -45,6 +46,7 @@ func (this *config) load() bool {
 	this.HttpPort, _ = cfg.GetValue("http", "Port")
 	this.CertFile, _ = cfg.GetValue("http", "CertFile")
 	this.KeyFile, _ = cfg.GetValue("http", "KeyFile")
+	this.Manager, _ = cfg.GetValue("http", "Manager")
 
 	this.AccessKeyID, _ = cfg.GetValue("aliyun", "AccessKeyID")
 	this.AccessSecret, _ = cfg.GetValue("aliyun", "AccessSecret")

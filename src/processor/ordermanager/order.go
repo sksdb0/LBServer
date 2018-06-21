@@ -124,10 +124,15 @@ func (this *OrderManager) GetAllOrder(w http.ResponseWriter, req *http.Request, 
 	}
 
 	var response lebangproto.GetOrderRes
-	if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["order"], nil, "-ordertime", nil, &response.Order) {
-		if len(response.Order) == 0 {
-			response.Errorcode = "no order"
-			logger.PRINTLINE("no order")
+	if reqdata.GetPhone() != config.Instance().Manager {
+		response.Errorcode = "请申请管理员权限"
+		logger.PRINTLINE("请申请管理员权限")
+	} else {
+		if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["order"], nil, "-ordertime", nil, &response.Order) {
+			if len(response.Order) == 0 {
+				response.Errorcode = "no order"
+				logger.PRINTLINE("no order")
+			}
 		}
 	}
 
