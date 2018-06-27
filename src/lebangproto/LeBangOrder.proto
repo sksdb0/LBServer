@@ -28,6 +28,8 @@ message Order{
 	int64 deliverytime = 10;
 	// 订单状态
 	int32 ordestatus = 11;
+	// 配送骑手
+	string rider = 12;
 }
 
 message GetOrderReq{

@@ -20,7 +20,9 @@ import (
 
 func Init(router *httprouter.Router) {
 	// idcode and authentication
-	router.POST("/login", Login)
+	router.POST("/ridervalidate", RiderValidate)
+	router.POST("/ridersignin", RiderSignIn)
+
 	router.POST("/getidcode", GetIDCode)
 	router.POST("/authentication", Authentication)
 
@@ -56,22 +58,22 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
 				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
 				logger.PRINTLINE("update")
-				userdata.Lastsignintime = reqdata.GetTime()
+				userdata.Lastsignintime = time.Now().Unix() * 1000
 				dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, userdata)
 			} else {
 				logger.PRINTLINE("insert")
 				userdata := lebangproto.User{
 					Phone:          reqdata.GetPhone(),
-					Registertime:   reqdata.GetTime(),
-					Lastsignintime: reqdata.GetTime(),
+					Registertime:   time.Now().Unix() * 1000,
+					Lastsignintime: time.Now().Unix() * 1000,
 				}
 				dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userdata)
 			}
 		} else if idcode.GetCode() != reqdata.GetCode() {
 			response.Errorcode = "验证码错误"
 			logger.PRINTLINE("authentication error: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
-		} else if time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds() > 90 {
-			durationsecond := time.Unix(reqdata.GetTime()/1000, 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds()
+		} else if time.Unix(time.Now().Unix(), 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds() > 90 {
+			durationsecond := time.Unix(time.Now().Unix(), 0).Sub(time.Unix(idcode.GetTime()/1000, 0)).Seconds()
 			logger.PRINTLINE(durationsecond)
 			response.Errorcode = "验证码超时"
 			logger.PRINTLINE("authentication error time out: ", idcode.GetPhone(), idcode.GetCode(), reqdata.GetCode())
@@ -80,14 +82,14 @@ func Authentication(w http.ResponseWriter, req *http.Request, _ httprouter.Param
 			if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"],
 				bson.M{"phone": reqdata.GetPhone()}, nil, &userdata) {
 				logger.PRINTLINE("update")
-				userdata.Lastsignintime = reqdata.GetTime()
+				userdata.Lastsignintime = time.Now().Unix() * 1000
 				dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, userdata)
 			} else {
 				logger.PRINTLINE("insert")
 				userdata := lebangproto.User{
 					Phone:          reqdata.GetPhone(),
-					Registertime:   reqdata.GetTime(),
-					Lastsignintime: reqdata.GetTime(),
+					Registertime:   time.Now().Unix() * 1000,
+					Lastsignintime: time.Now().Unix() * 1000,
 				}
 				dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["user"], userdata)
 			}
@@ -151,20 +153,48 @@ func GetIDCode(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	io.WriteString(w, string(sendbuf))
 }
 
-func Login(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+func RiderValidate(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	defer req.Body.Close()
 	buf := make([]byte, req.ContentLength)
 	common.GetBuffer(req, buf)
 
-	var reqdata lebangproto.LoginReq
+	var reqdata lebangproto.RiderValidateReq
 	if !common.Unmarshal(buf, &reqdata) {
 		return
 	}
 	logger.PRINTLINE(reqdata.GetPhone())
 
 	var response lebangproto.Response
-	if reqdata.GetPhone() != "123456" {
-		response.Errorcode = "user not exist"
+	if !dbmanager.GetMongo().IsExist(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}) {
+		response.Errorcode = "rider not exist"
+	}
+
+	sendbuf, err := json.Marshal(response)
+	if err != nil {
+		logger.PRINTLINE("Marshal response error: ", err)
+		return
+	}
+
+	io.WriteString(w, string(sendbuf))
+}
+
+func RiderSignIn(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer req.Body.Close()
+	buf := make([]byte, req.ContentLength)
+	common.GetBuffer(req, buf)
+
+	var reqdata lebangproto.RiderSignInReq
+	if !common.Unmarshal(buf, &reqdata) {
+		return
+	}
+	logger.PRINTLINE(reqdata.GetPhone())
+
+	var response lebangproto.Response
+	var rider lebangproto.Rider
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, nil, &rider) {
+		if rider.GetPassword() != reqdata.GetPassword() {
+			response.Errorcode = "password error"
+		}
 	}
 
 	sendbuf, err := json.Marshal(response)

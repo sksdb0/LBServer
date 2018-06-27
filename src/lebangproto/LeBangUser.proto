@@ -16,6 +16,17 @@ message LoginReq{
 	string phone = 1;
 }
 
+// request
+message RiderValidateReq{
+	string phone = 1;
+}
+
+// request
+message RiderSignInReq{
+	string phone = 1;
+	string password = 2;
+}
+
 // model
 message IDCode{
 	string phone = 1;
@@ -41,4 +52,33 @@ message User{
 	int64 lastsignintime = 7;
 }
 
+// model
+message Manager{
+	// 手机
+	string phone = 1;
+	// 姓名
+	string name = 2;
+	// 密码
+	string password = 3;
+	// 注册时间
+	int64 registertime = 4;
+	// 最后登录时间
+	int64 lastsignintime = 5;
+}
+
+// model
+message Rider{
+	// 手机
+	string phone = 1;
+	// 姓名
+	string name = 2;
+	// 密码
+	string password = 3;
+	// 骑手状态
+	int64 state = 4;
+	// 注册时间
+	int64 registertime = 5;
+	// 最后登录时间
+	int64 lastsignintime = 6;
+}
 

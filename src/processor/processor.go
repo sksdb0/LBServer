@@ -10,6 +10,7 @@ import (
 	"processor/feedback"
 	"processor/ordermanager"
 	"processor/picture"
+	"processor/rider"
 	"processor/usermanager"
 )
 
@@ -21,6 +22,7 @@ func Init() {
 	ordermanager.Init(router)
 	picture.Init(router)
 	classification.Init(router)
+	rider.Init(router)
 
 	err := http.ListenAndServeTLS(config.Instance().HttpPort, config.Instance().CertFile, config.Instance().KeyFile, router)
 	if err != nil {

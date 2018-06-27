@@ -12,6 +12,7 @@ import (
 	"processor/common"
 	"processor/usermanager"
 	"sync"
+	"time"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -57,9 +58,10 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 	var user lebangproto.User
 	var response lebangproto.Response
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, nil, &user) {
+		reqdata.Ordertime = time.Now().Unix() * 1000
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
-		user.Ordertimes += 1
 
+		user.Ordertimes += 1
 		usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
 		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
 	} else {

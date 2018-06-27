@@ -4,6 +4,7 @@ import (
 	"config"
 	"dbmanager"
 	"logger"
+	"os"
 	"processor"
 )
 
@@ -25,7 +26,11 @@ func main() {
 	}
 	defer dbmanager.Close()
 
-	//	dbmanager.GetMongo().InitFile()
+	if len(os.Args) > 1 {
+		if os.Args[1] == "init" {
+			dbmanager.GetMongo().InitFile()
+		}
+	}
 
 	processor.Init()
 }

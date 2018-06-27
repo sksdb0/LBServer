@@ -12,6 +12,7 @@ It is generated from these files:
 	LeBangErrandsMerchant.proto
 	LeBangFeedBack.proto
 	LeBangOrder.proto
+	LeBangRider.proto
 	LeBangUser.proto
 
 It has these top-level messages:
@@ -43,11 +44,23 @@ It has these top-level messages:
 	GetOrderRes
 	ModifyOrderReq
 	CancelOrderReq
+	AddRiderReq
+	GetRiderReq
+	GetRiderRes
+	DeleteRiderReq
+	UploadRiderLocationReq
+	GetRiderLocationsReq
+	GetRiderLocationsRes
+	RiderLocation
 	Response
 	GetIDCodeReq
 	LoginReq
+	RiderValidateReq
+	RiderSignInReq
 	IDCode
 	User
+	Manager
+	Rider
 */
 package lebangproto
 
