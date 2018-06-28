@@ -45,7 +45,7 @@ func GetSubClassification(w http.ResponseWriter, req *http.Request, _ httprouter
 			}
 
 			if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["subclassification"],
-				bson.M{"parenttypeid": typeid}, "", nil, &classification.Classification) {
+				bson.M{"parenttypeid": typeid}, "typeid", nil, &classification.Classification) {
 				response.Classification = append(response.Classification, &classification)
 			} else {
 				response.Errorcode = "no sub classificationview"

@@ -48,6 +48,7 @@ It has these top-level messages:
 	GetRiderReq
 	GetRiderRes
 	DeleteRiderReq
+	ModifyRiderPasswordReq
 	UploadRiderLocationReq
 	GetRiderLocationsReq
 	GetRiderLocationsRes

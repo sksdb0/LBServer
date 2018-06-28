@@ -22,6 +22,12 @@ message DeleteRiderReq{
 	string phone = 1;
 }
 
+message ModifyRiderPasswordReq{
+	string phone = 1;
+	string oripassword = 2;
+	string newpassword = 3;
+}
+
 message UploadRiderLocationReq{
 	// rider id
 	string phone = 1;
@@ -38,6 +44,13 @@ message GetRiderLocationsReq{
 message GetRiderLocationsRes{
 	repeated RiderLocation location = 1;
 	string errorcode = 2;
+}
+
+enum RiderState {
+	RIDER_STATE_ONJOB = 0;
+	RIDER_STATE_WORK = 1;
+	RIDER_STATE_REST = 2;
+	RIDER_STATE_DIMISSION = 10;
 }
 
 // model

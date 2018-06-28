@@ -35,6 +35,8 @@ func Init(router *httprouter.Router) {
 
 	router.POST("/uploadriderlocation", ridermanager.UploadRiderLocation)
 
+	router.POST("/modifyriderpassword", ridermanager.ModifyRiderPassword)
+
 }
 
 func (this *RiderManager) AddRider(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
@@ -54,13 +56,20 @@ func (this *RiderManager) AddRider(w http.ResponseWriter, req *http.Request, _ h
 	var rider lebangproto.Rider
 	var response lebangproto.Response
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, nil, &rider) {
-		response.Errorcode = "骑手已经存在"
+		if rider.State != int64(lebangproto.RiderState_RIDER_STATE_DIMISSION) {
+			response.Errorcode = "骑手已经存在"
+		} else {
+			rider.State = int64(lebangproto.RiderState_RIDER_STATE_ONJOB)
+			rider.Phone = reqdata.GetPhone()
+			dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, &rider)
+		}
 	} else {
 		rider = lebangproto.Rider{Phone: reqdata.GetPhone(),
 			Name:           reqdata.GetName(),
 			Registertime:   time.Now().Unix() * 1000,
 			Lastsignintime: time.Now().Unix() * 1000,
-			Password:       "123456"}
+			Password:       "123456",
+			State:          int64(lebangproto.RiderState_RIDER_STATE_ONJOB)}
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["rider"], rider)
 	}
 
@@ -87,7 +96,8 @@ func (this *RiderManager) GetRider(w http.ResponseWriter, req *http.Request, _ h
 	logger.PRINTLINE(reqdata.GetPhone())
 
 	var response lebangproto.GetRiderRes
-	if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["rider"], nil, "", nil, &response.Rider) {
+	if dbmanager.GetMongo().FindAll(config.DB().DBName, config.DB().CollMap["rider"],
+		bson.M{"state": bson.M{"$lt": int64(lebangproto.RiderState_RIDER_STATE_DIMISSION)}}, "", nil, &response.Rider) {
 		if len(response.Rider) == 0 {
 			response.Errorcode = "no rider"
 			logger.PRINTLINE("no rider")
@@ -120,7 +130,8 @@ func (this *RiderManager) DeleteRider(w http.ResponseWriter, req *http.Request, 
 	var rider lebangproto.Rider
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["rider"],
 		bson.M{"phone": reqdata.GetPhone()}, nil, &rider) {
-		dbmanager.GetMongo().Remove(config.DB().DBName, config.DB().CollMap["rider"], rider)
+		rider.State = int64(lebangproto.RiderState_RIDER_STATE_DIMISSION)
+		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, &rider)
 	} else {
 		response.Errorcode = "order not exist"
 		logger.PRINTLINE("order not exist: ", reqdata.GetPhone())
@@ -210,7 +221,42 @@ func (this *RiderManager) UploadRiderLocation(w http.ResponseWriter, req *http.R
 		}
 	}
 	for _, l := range this.riderlocationmap {
-		logger.PRINTLINE(l)
+		logger.PRINTLINE(reqdata.GetPhone(), l.GetPhone(), l.GetLatitude(), l.GetLongitude(), l.GetTime())
+	}
+
+	sendbuf, err := json.Marshal(response)
+	if err != nil {
+		logger.PRINTLINE("Marshal response error: ", err)
+		return
+	}
+	io.WriteString(w, string(sendbuf))
+}
+
+func (this *RiderManager) ModifyRiderPassword(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	this.idmutex.Lock()
+	defer this.idmutex.Unlock()
+
+	defer req.Body.Close()
+	buf := make([]byte, req.ContentLength)
+	common.GetBuffer(req, buf)
+
+	var reqdata lebangproto.ModifyRiderPasswordReq
+	if !common.Unmarshal(buf, &reqdata) {
+		return
+	}
+
+	logger.PRINTLINE(reqdata)
+	var rider lebangproto.Rider
+	var response lebangproto.Response
+	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, nil, &rider) {
+		if rider.GetPassword() != reqdata.GetOripassword() {
+			response.Errorcode = "密码错误"
+		} else {
+			rider.Password = reqdata.GetNewpassword()
+			dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, &rider)
+		}
+	} else {
+		response.Errorcode = "骑手不存在"
 	}
 
 	sendbuf, err := json.Marshal(response)

@@ -194,6 +194,10 @@ func RiderSignIn(w http.ResponseWriter, req *http.Request, _ httprouter.Params) 
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["rider"], bson.M{"phone": reqdata.GetPhone()}, nil, &rider) {
 		if rider.GetPassword() != reqdata.GetPassword() {
 			response.Errorcode = "password error"
+			logger.PRINTLINE("password error")
+		} else if rider.GetState() == int64(lebangproto.RiderState_RIDER_STATE_DIMISSION) {
+			response.Errorcode = "authority error"
+			logger.PRINTLINE("authority error")
 		}
 	}
 
