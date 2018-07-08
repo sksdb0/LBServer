@@ -13,6 +13,7 @@ import (
 	"processor/usermanager"
 	"sync"
 	"time"
+	"xinge"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -60,6 +61,10 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, nil, &user) {
 		reqdata.Ordertime = time.Now().Unix() * 1000
 		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
+		go func() {
+			xinge.PushTokenAndroid(config.Instance().XingeAccessId, config.Instance().XingeSecretKey,
+				"新订单", reqdata.GetPhone(), "e254eb4b83065fed10b80bf6c757c94397f39177")
+		}()
 
 		user.Ordertimes += 1
 		usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())

@@ -18,6 +18,9 @@ type config struct {
 	AccessKeyID  string
 	AccessSecret string
 
+	XingeAccessId  int64
+	XingeSecretKey string
+
 	DB *db.DB
 }
 
@@ -50,6 +53,9 @@ func (this *config) load() bool {
 
 	this.AccessKeyID, _ = cfg.GetValue("aliyun", "AccessKeyID")
 	this.AccessSecret, _ = cfg.GetValue("aliyun", "AccessSecret")
+
+	this.XingeAccessId, _ = cfg.Int64("xinge", "XingeAccessId")
+	this.XingeSecretKey, _ = cfg.GetValue("xinge", "XingeSecretKey")
 
 	return true
 }
