@@ -59,16 +59,22 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 	var user lebangproto.User
 	var response lebangproto.Response
 	if dbmanager.GetMongo().Find(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, nil, &user) {
-		reqdata.Ordertime = time.Now().Unix() * 1000
-		dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
-		go func() {
-			xinge.PushTokenAndroid(config.Instance().XingeAccessId, config.Instance().XingeSecretKey,
-				"新订单", reqdata.GetPhone(), "e254eb4b83065fed10b80bf6c757c94397f39177")
-		}()
+		now := time.Now()
+		if now.Hour() > 21 || now.Hour() < 7 {
+			response.Errorcode = "营业时间为早7点至晚10点"
+			logger.PRINTLINE("营业时间为早7点至晚10点: ", reqdata.GetPhone())
+		} else {
+			reqdata.Ordertime = time.Now().Unix() * 1000
+			dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
+			go func() {
+				xinge.PushTokenAndroid(config.Instance().XingeAccessId, config.Instance().XingeSecretKey,
+					"新订单", reqdata.GetPhone(), "e254eb4b83065fed10b80bf6c757c94397f39177")
+			}()
 
-		user.Ordertimes += 1
-		usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
-		dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
+			user.Ordertimes += 1
+			usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
+			dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
+		}
 	} else {
 		response.Errorcode = "user not exist"
 		logger.PRINTLINE("user not exist: ", reqdata.GetPhone())
