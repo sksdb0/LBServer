@@ -21,7 +21,8 @@ type config struct {
 	XingeAccessId  int64
 	XingeSecretKey string
 
-	DB *db.DB
+	XingeToken map[string]string
+	DB         *db.DB
 }
 
 func Init() bool {
@@ -57,11 +58,13 @@ func (this *config) load() bool {
 	this.XingeAccessId, _ = cfg.Int64("xinge", "XingeAccessId")
 	this.XingeSecretKey, _ = cfg.GetValue("xinge", "XingeSecretKey")
 
+	this.XingeToken, _ = cfg.GetSection("xingetoken")
 	return true
 }
 
 func newconfig() *config {
 	return &config{
-		DB: db.NewDB(),
+		DB:         db.NewDB(),
+		XingeToken: make(map[string]string),
 	}
 }

@@ -67,8 +67,10 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 			reqdata.Ordertime = time.Now().Unix() * 1000
 			dbmanager.GetMongo().Insert(config.DB().DBName, config.DB().CollMap["order"], reqdata)
 			go func() {
-				xinge.PushTokenAndroid(config.Instance().XingeAccessId, config.Instance().XingeSecretKey,
-					"新订单", reqdata.GetPhone(), "e254eb4b83065fed10b80bf6c757c94397f39177")
+				for _, v := range config.Instance().XingeToken {
+					xinge.PushTokenAndroid(config.Instance().XingeAccessId, config.Instance().XingeSecretKey,
+						"新订单", reqdata.GetPhone(), v)
+				}
 			}()
 
 			user.Ordertimes += 1
