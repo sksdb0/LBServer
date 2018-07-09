@@ -76,6 +76,12 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 			user.Ordertimes += 1
 			usermanager.UpdateErrandsCommonMerchant(reqdata.GetPhone(), reqdata.GetMerchant())
 			dbmanager.GetMongo().Update(config.DB().DBName, config.DB().CollMap["user"], bson.M{"phone": reqdata.GetPhone()}, &user)
+
+			err := alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, "2408804",
+				"乐帮跑腿", fmt.Sprintf("{code:%s}", "9999"), "SMS_135792492")
+			if err != nil {
+				logger.PRINTLINE("dysms.SendSms", err)
+			}
 		}
 	} else {
 		response.Errorcode = "user not exist"
