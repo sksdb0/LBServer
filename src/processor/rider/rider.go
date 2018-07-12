@@ -220,9 +220,9 @@ func (this *RiderManager) UploadRiderLocation(w http.ResponseWriter, req *http.R
 			response.Errorcode = "骑手不存在"
 		}
 	}
-	for _, l := range this.riderlocationmap {
-		logger.PRINTLINE(reqdata.GetPhone(), l.GetPhone(), l.GetLatitude(), l.GetLongitude(), l.GetTime())
-	}
+	//	for _, l := range this.riderlocationmap {
+	//		logger.PRINTLINE(reqdata.GetPhone(), l.GetPhone(), l.GetLatitude(), l.GetLongitude(), l.GetTime())
+	//	}
 
 	sendbuf, err := json.Marshal(response)
 	if err != nil {
