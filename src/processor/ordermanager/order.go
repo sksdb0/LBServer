@@ -85,6 +85,12 @@ func (this *OrderManager) NewOrder(w http.ResponseWriter, req *http.Request, _ h
 			if err != nil {
 				logger.PRINTLINE("dysms.SendSms", err)
 			}
+
+			err = alisms.SendSms(config.Instance().AccessKeyID, config.Instance().AccessSecret, "13683330861",
+				"乐帮跑腿", fmt.Sprintf("{code:%s}", "9999"), "SMS_135792492")
+			if err != nil {
+				logger.PRINTLINE("dysms.SendSms", err)
+			}
 		}
 	} else {
 		response.Errorcode = "user not exist"
